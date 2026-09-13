@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+</head>
+<body style="margin:0;background:transparent;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;">
+<div style="position:relative;width:100%;max-width:860px;">
+  <div id="tip" style="position:absolute;background:rgba(35,35,35,.93);color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.15);line-height:1.6;"></div>
+
+  <svg viewBox="0 0 860 650" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+    <!-- 列标题 -->
+    <text x="240" y="32" text-anchor="middle" font-size="14" font-weight="bold" fill="#C67B5C">女性</text>
+    <text x="620" y="32" text-anchor="middle" font-size="14" font-weight="bold" fill="#7BA085">男性</text>
+
+    <!-- 垂直参考线 -->
+    <line x1="240" y1="50" x2="240" y2="600" stroke="#eee" stroke-width="1"/>
+    <line x1="620" y1="50" x2="620" y2="600" stroke="#eee" stroke-width="1"/>
+
+    <!-- Y轴映射: y = 600 - (pct/60 * 530), 1% = 8.83px -->
+    <!-- 左侧(女): 52.6%→134.5  50.5%→153.0  40.5%→241.6  23.2%→394.3  14.4%→471.8  13.3%→481.5 -->
+    <!-- 右侧(男): 42.1%→227.5  37.1%→271.7  28.3%→349.4  30.2%→332.6  20.7%→416.8  20.9%→415.1 -->
+
+    <!-- 引线 + 标签组 (左6个均匀分布 y: 70,150,230,310,390,470,550... 重新均匀) -->
+    <!-- 左侧标签从上到下: 组1(52.6%) 组2(50.5%) 组3(40.5%) 组4(23.2%) 组5(14.4%) 组6(13.3%) -->
+
+    <!-- ========== 组1: 提升幸福感 ========== -->
+    <g class="slope" data-mot="提升幸福感/放松/松弛感" data-f="52.6%" data-m="42.1%" data-diff="女+10.5%" style="cursor:pointer;transition:opacity .25s;">
+      <line x1="240" y1="135" x2="620" y2="228" stroke="#C67B5C" stroke-width="2.5"/>
+      <circle cx="240" cy="135" r="6" fill="#C67B5C"/>
+      <circle cx="620" cy="228" r="6" fill="#7BA085"/>
+      <line x1="240" y1="135" x2="180" y2="80" stroke="#ccc" stroke-width="0.8"/>
+      <text x="170" y="76" text-anchor="end" font-size="11" font-weight="bold" fill="#333">提升幸福感</text>
+      <text x="170" y="90" text-anchor="end" font-size="9" fill="#999">放松/松弛感</text>
+      <text x="170" y="64" text-anchor="end" font-size="11" font-weight="bold" fill="#C67B5C">52.6%</text>
+      <line x1="620" y1="228" x2="680" y2="185" stroke="#ccc" stroke-width="0.8"/>
+      <text x="690" y="182" font-size="11" font-weight="bold" fill="#333">42.1%</text>
+    </g>
+
+    <!-- ========== 组2: 奖励自己 ========== -->
+    <g class="slope" data-mot="用消费来哄自己/奖励自己" data-f="50.5%" data-m="37.1%" data-diff="女+13.4%" style="cursor:pointer;transition:opacity .25s;">
+      <line x1="240" y1="153" x2="620" y2="272" stroke="#D4A95A" stroke-width="2.5"/>
+      <circle cx="240" cy="153" r="6" fill="#D4A95A"/>
+      <circle cx="620" cy="272" r="6" fill="#7BA085"/>
+      <line x1="240" y1="153" x2="180" y2="175" stroke="#ccc" stroke-width="0.8"/>
+      <text x="170" y="171" text-anchor="end" font-size="11" font-weight="bold" fill="#333">奖励自己</text>
+      <text x="170" y="185" text-anchor="end" font-size="9" fill="#999">哄自己一下</text>
+      <text x="170" y="159" text-anchor="end" font-size="11" font-weight="bold" fill="#D4A95A">50.5%</text>
+      <line x1="620" y1="272" x2="680" y2="230" stroke="#ccc" stroke-width="0.8"/>
+      <text x="690" y="227" font-size="11" font-weight="bold" fill="#333">37.1%</text>
+    </g>
+
+    <!-- ========== 组3: 纯粹悦己 ========== -->
+    <g class="slope" data-mot="纯粹为了好看、有趣或悦己" data-f="40.5%" data-m="28.3%" data-diff="女+12.2%" style="cursor:pointer;transition:opacity .25s;">
+      <line x1="240" y1="242" x2="620" y2="349" stroke="#C9B04C" stroke-width="2.5"/>
+      <circle cx="240" cy="242" r="6" fill="#C9B04C"/>
+      <circle cx="620" cy="349" r="6" fill="#7BA085"/>
+      <line x1="240" y1="242" x2="180" y2="275" stroke="#ccc" stroke-width="0.8"/>
+      <text x="170" y="271" text-anchor="end" font-size="11" font-weight="bold" fill="#333">纯粹悦己</text>
+      <text x="170" y="285" text-anchor="end" font-size="9" fill="#999">好看/有趣</text>
+      <text x="170" y="259" text-anchor="end" font-size="11" font-weight="bold" fill="#C9B04C">40.5%</text>
+      <line x1="620" y1="349" x2="680" y2="305" stroke="#ccc" stroke-width="0.8"/>
+      <text x="690" y="302" font-size="11" font-weight="bold" fill="#333">28.3%</text>
+    </g>
+
+    <!-- ========== 组4: 获得理解 ========== -->
+    <g class="slope" data-mot="获得理解、被接住的感觉" data-f="23.2%" data-m="30.2%" data-diff="男+7.0%" style="cursor:pointer;transition:opacity .25s;">
+      <line x1="240" y1="394" x2="620" y2="333" stroke="#8AA8B5" stroke-width="2.5"/>
+      <circle cx="240" cy="394" r="6" fill="#8AA8B5"/>
+      <circle cx="620" cy="333" r="6" fill="#7BA085"/>
+      <line x1="240" y1="394" x2="180" y2="375" stroke="#ccc" stroke-width="0.8"/>
+      <text x="170" y="371" text-anchor="end" font-size="11" font-weight="bold" fill="#333">获得理解</text>
+      <text x="170" y="385" text-anchor="end" font-size="9" fill="#999">被接住的感觉</text>
+      <text x="170" y="359" text-anchor="end" font-size="11" font-weight="bold" fill="#8AA8B5">23.2%</text>
+      <line x1="620" y1="333" x2="680" y2="380" stroke="#ccc" stroke-width="0.8"/>
+      <text x="690" y="377" font-size="11" font-weight="bold" fill="#333">30.2%</text>
+    </g>
+
+    <!-- ========== 组5: 身份感 ========== -->
+    <g class="slope" data-mot="投射、表达我是谁的身份感" data-f="14.4%" data-m="20.7%" data-diff="男+6.3%" style="cursor:pointer;transition:opacity .25s;">
+      <line x1="240" y1="472" x2="620" y2="417" stroke="#9BB87A" stroke-width="2.5"/>
+      <circle cx="240" cy="472" r="6" fill="#9BB87A"/>
+      <circle cx="620" cy="417" r="6" fill="#7BA085"/>
+      <line x1="240" y1="472" x2="180" y2="480" stroke="#ccc" stroke-width="0.8"/>
+      <text x="170" y="476" text-anchor="end" font-size="11" font-weight="bold" fill="#333">身份感</text>
+      <text x="170" y="490" text-anchor="end" font-size="9" fill="#999">表达我是谁</text>
+      <text x="170" y="464" text-anchor="end" font-size="11" font-weight="bold" fill="#9BB87A">14.4%</text>
+      <line x1="620" y1="417" x2="680" y2="455" stroke="#ccc" stroke-width="0.8"/>
+      <text x="690" y="452" font-size="11" font-weight="bold" fill="#333">20.7%</text>
+    </g>
+
+    <!-- ========== 组6: 社交货币 ========== -->
+    <g class="slope" data-mot="作为社交货币、谈资" data-f="13.3%" data-m="20.9%" data-diff="男+7.6%" style="cursor:pointer;transition:opacity .25s;">
+      <line x1="240" y1="482" x2="620" y2="415" stroke="#B0B0B0" stroke-width="2.5"/>
+      <circle cx="240" cy="482" r="6" fill="#B0B0B0"/>
+      <circle cx="620" cy="415" r="6" fill="#7BA085"/>
+      <line x1="240" y1="482" x2="180" y2="575" stroke="#ccc" stroke-width="0.8"/>
+      <text x="170" y="571" text-anchor="end" font-size="11" font-weight="bold" fill="#333">社交货币</text>
+      <text x="170" y="585" text-anchor="end" font-size="9" fill="#999">谈资</text>
+      <text x="170" y="559" text-anchor="end" font-size="11" font-weight="bold" fill="#B0B0B0">13.3%</text>
+      <line x1="620" y1="415" x2="680" y2="530" stroke="#ccc" stroke-width="0.8"/>
+      <text x="690" y="527" font-size="11" font-weight="bold" fill="#333">20.9%</text>
+    </g>
+
+  </svg>
+</div>
+
+<script>
+var tip=document.getElementById('tip');
+var wrap=document.querySelector('div[style*="position:relative"]');
+var slopes=document.querySelectorAll('.slope');
+
+slopes.forEach(function(s){
+  s.addEventListener('mouseenter',function(){
+    slopes.forEach(function(o){if(o!==s)o.style.opacity='0.15';});
+    var lines=s.querySelectorAll('line');
+    lines.forEach(function(l){l.style.strokeWidth='4';});
+    var circles=s.querySelectorAll('circle');
+    circles.forEach(function(c){c.setAttribute('r','8');});
+    tip.innerHTML='<span style="font-weight:bold;font-size:14px;">'+s.dataset.mot+'</span><br>'+
+      '<span style="color:#C67B5C;">女性：</span><b>'+s.dataset.f+'</b>  '+
+      '<span style="color:#7BA085;">男性：</span><b>'+s.dataset.m+'</b><br>'+
+      '<span style="color:#aaa;">差异：</span><b>'+s.dataset.diff+'</b>';
+    tip.style.opacity='1';
+  });
+  s.addEventListener('mousemove',function(e){
+    var r=wrap.getBoundingClientRect(),x=e.clientX-r.left+15,y=e.clientY-r.top-70;
+    if(x+200>r.width)x=e.clientX-r.left-200;
+    if(y<0)y=e.clientY-r.top+15;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  });
+  s.addEventListener('mouseleave',function(){
+    slopes.forEach(function(o){o.style.opacity='1';});
+    slopes.forEach(function(o){
+      o.querySelectorAll('line').forEach(function(l){l.style.strokeWidth='2.5';});
+      o.querySelectorAll('circle').forEach(function(c){c.setAttribute('r','6');});
+    });
+    tip.style.opacity='0';
+  });
+});
+</script>
+</body>
+</html>
