@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { margin: 0; background: transparent; display: flex; justify-content: center; align-items: center; padding: 0; }
+  .chart-wrap { position: relative; width: 560px; height: 550px; }
+  svg { display: block; }
+  .thumb-icon { transition: opacity 0.2s; cursor: pointer; }
+  .thumb-icon.dim { opacity: 0.12; }
+  .thumb-icon.bright { opacity: 1; }
+  .tooltip {
+    position: fixed;
+    background: #333;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: #fff;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    white-space: nowrap;
+    z-index: 999;
+  }
+  .tooltip .tt-cat { font-size: 13px; font-weight: bold; }
+  .tooltip .tt-score { font-size: 12px; margin-top: 3px; }
+  .tooltip .tt-val { background: #fff; color: #333; border-radius: 3px; padding: 3px 7px; margin-top: 5px; display: inline-block; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="chart-wrap">
+<svg width="560" height="550" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="thumb" viewBox="0 0 24 24">
+      <path d="M 9 9 L 9 21 L 13.5 21 C 14.5 21 15.5 20.5 16 19 L 17.5 11 C 17.5 10 16.5 9 15.5 9 L 12 9 L 13 4.5 C 13.1 3.5 12.5 2.5 11.5 2.5 C 10.5 2.5 9.9 3.5 9.8 4.5 L 9 9 Z M 4.5 9 C 4 9 3.5 9.5 3.5 10 L 3.5 20 C 3.5 20.5 4 21 4.5 21 L 9 21 L 9 9 L 4.5 9 Z"/>
+    </symbol>
+  </defs>
+
+  <g transform="translate(150, 5)">
+    <use href="#thumb" x="0" y="0" width="16" height="16" fill="#d4a95a"/>
+    <text x="20" y="13" font-size="12" fill="#666" font-family="sans-serif">1分</text>
+    <use href="#thumb" x="60" y="0" width="16" height="16" fill="#7ba687"/>
+    <text x="80" y="13" font-size="12" fill="#666" font-family="sans-serif">2分</text>
+    <use href="#thumb" x="120" y="0" width="16" height="16" fill="#6b8cae"/>
+    <text x="140" y="13" font-size="12" fill="#666" font-family="sans-serif">3分</text>
+    <use href="#thumb" x="180" y="0" width="16" height="16" fill="#9b8ec4"/>
+    <text x="200" y="13" font-size="12" fill="#666" font-family="sans-serif">4分</text>
+    <use href="#thumb" x="240" y="0" width="16" height="16" fill="#e8a87c"/>
+    <text x="260" y="13" font-size="12" fill="#666" font-family="sans-serif">5分</text>
+  </g>
+</svg>
+<div class="tooltip" id="tooltip"></div>
+</div>
+<script>
+(function() {
+  var colors = ['#d4a95a', '#7ba687', '#6b8cae', '#9b8ec4', '#e8a87c'];
+  var data = [
+    { name: '即时情绪改善效果', scores: [2, 4, 17, 35, 42], pcts: [1.84, 4.17, 16.93, 35.21, 41.84] },
+    { name: '效果持久性', scores: [2, 8, 23, 31, 36], pcts: [1.84, 8.22, 23.19, 31.41, 35.34] },
+    { name: '性价比', scores: [3, 5, 22, 35, 35], pcts: [2.82, 4.79, 22.21, 35.21, 34.97] },
+    { name: '长期情绪能力提升', scores: [2, 6, 23, 32, 37], pcts: [2.33, 5.64, 23.07, 31.9, 37.06] },
+    { name: '满意度', scores: [2, 5, 21, 39, 33], pcts: [2.45, 5.15, 20.86, 39.02, 32.52] }
+  ];
+
+  var svg = document.querySelector('svg');
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+  var cellSize = 20;
+  var iconSize = 20;
+  var gridTop = 35;
+  var gridCols = 5;
+  var gridRows = 20;
+  var colWidth = gridCols * cellSize;
+  var colGap = 10;
+  var startX = 10;
+  var totalWidth = 5 * colWidth + 4 * colGap + startX * 2;
+  var actualStart = (560 - totalWidth) / 2;
+  var tooltip = document.getElementById('tooltip');
+  var allIcons = [];
+
+  data.forEach(function(cat, ci) {
+    var colX = actualStart + ci * (colWidth + colGap);
+
+    var colorArr = [];
+    for (var s = 0; s < 5; s++) {
+      for (var n = 0; n < cat.scores[s]; n++) {
+        colorArr.push(s);
+      }
+    }
+
+    for (var i = 0; i < 100; i++) {
+      var scoreIdx = colorArr[i];
+      var r = Math.floor(i / gridCols);
+      var c = i % gridCols;
+      var x = colX + c * cellSize;
+      var y = gridTop + (gridRows - 1 - r) * cellSize;
+
+      var use = document.createElementNS(SVG_NS, 'use');
+      use.setAttribute('href', '#thumb');
+      use.setAttribute('x', x);
+      use.setAttribute('y', y);
+      use.setAttribute('width', iconSize);
+      use.setAttribute('height', iconSize);
+      use.setAttribute('fill', colors[scoreIdx]);
+      use.setAttribute('class', 'thumb-icon');
+      use.setAttribute('data-col', ci);
+      use.setAttribute('data-score', scoreIdx);
+      use.setAttribute('data-cat', cat.name);
+      use.setAttribute('data-pct', cat.pcts[scoreIdx]);
+
+      use.addEventListener('mouseenter', function(e) {
+        var dcol = parseInt(this.getAttribute('data-col'));
+        var dscore = parseInt(this.getAttribute('data-score'));
+        var dcat = this.getAttribute('data-cat');
+        var dpct = this.getAttribute('data-pct');
+
+        allIcons.forEach(function(ic) {
+          var icCol = parseInt(ic.getAttribute('data-col'));
+          var icScore = parseInt(ic.getAttribute('data-score'));
+          if (icCol === dcol && icScore === dscore) {
+            ic.classList.add('bright');
+            ic.classList.remove('dim');
+          } else {
+            ic.classList.add('dim');
+            ic.classList.remove('bright');
+          }
+        });
+
+        tooltip.innerHTML = '<div class="tt-cat">' + dcat + '</div><div class="tt-score">' + (dscore+1) + '分</div><div class="tt-val">' + dpct + '%</div>';
+        tooltip.style.opacity = '1';
+      });
+      use.addEventListener('mousemove', function(e) {
+        tooltip.style.left = (e.clientX + 12) + 'px';
+        tooltip.style.top = (e.clientY - 40) + 'px';
+      });
+      use.addEventListener('mouseleave', function(e) {
+        allIcons.forEach(function(ic) { ic.classList.remove('dim', 'bright'); });
+        tooltip.style.opacity = '0';
+      });
+
+      svg.appendChild(use);
+      allIcons.push(use);
+    }
+
+    var label = document.createElementNS(SVG_NS, 'text');
+    label.setAttribute('x', colX + colWidth / 2);
+    label.setAttribute('y', gridTop + gridRows * cellSize + 22);
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('font-size', '11');
+    label.setAttribute('fill', '#333');
+    label.setAttribute('font-family', 'PingFang SC, Microsoft YaHei, sans-serif');
+    label.textContent = cat.name;
+    svg.appendChild(label);
+  });
+})();
+</script>
+</body>
+</html>
