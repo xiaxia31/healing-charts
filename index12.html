@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>半圆议会图-顺时针90°完整8色</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    html,body{height:100%;margin:0;background:transparent;}
+    #chart{width:100%;height:100%;}
+  </style>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+const myChart = echarts.init(document.getElementById('chart'), null, {
+  renderer: 'canvas',
+  backgroundColor: 'transparent'
+});
+
+const data = [
+  { value: 49.94, name: '消费后产生空虚感或愧疚感' },
+  { value: 41.35, name: '同质化严重' },
+  { value: 39.63, name: '容易产生依赖' },
+  { value: 29.94, name: '价格与价值不匹配' },
+  { value: 28.96, name: '治标不治本' },
+  { value: 13.37, name: '效果短暂' },
+  { value: 9.45, name: '个性化不足' },
+  { value: 3.44, name: '存在潜在健康风险' }
+];
+
+const defaultPalette = [
+  '#c9785c',
+  '#d4a95a',
+  '#7ba687',
+  '#6b8cae',
+  '#9b8ec4',
+  '#e8a87c',
+  '#8a7e70',
+  '#c9a98a'
+];
+
+const radius = ['30%', '80%'];
+
+const pieOption = {
+  backgroundColor: 'transparent',
+  series: [
+    {
+      type: 'pie',
+      id: 'distribution',
+      radius: radius,
+      label: { show: true },
+      universalTransition: true,
+      animationDurationUpdate: 1000,
+      data: data
+    }
+  ]
+};
+
+const parliamentOption = (function () {
+  let sum = data.reduce(function (sum, cur) {
+    return sum + cur.value;
+  }, 0);
+  let angles = [];
+  let startAngle = -Math.PI / 2;
+  let curAngle = startAngle;
+  const totalSector = Math.PI;
+  data.forEach(function (item) {
+    angles.push(curAngle);
+    curAngle += (item.value / sum) * totalSector;
+  });
+  angles.push(startAngle + totalSector);
+
+  function parliamentLayout(startAngle, endAngle, totalAngle, r0, r1, size) {
+    let rowsCount = Math.ceil((r1 - r0) / size);
+    let points = [];
+    let r = r0;
+    for (let i = 0; i < rowsCount; i++) {
+      let totalRingSeatsNumber = Math.round((totalAngle * r) / size);
+      let newSize = (totalAngle * r) / totalRingSeatsNumber;
+      for (
+        let k = Math.floor((startAngle * r) / newSize) * newSize;
+        k < Math.floor((endAngle * r) / newSize) * newSize - 1e-6;
+        k += newSize
+      ) {
+        let angle = k / r;
+        let x = Math.cos(angle) * r;
+        let y = Math.sin(angle) * r;
+        points.push([x, y]);
+      }
+      r += size;
+    }
+    return points;
+  }
+
+  return {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'item',
+      formatter: function (params) {
+        return params.data.name + '<br/>占比：' + params.data.value + '%';
+      }
+    },
+    series: {
+      type: 'custom',
+      id: 'distribution',
+      data: data,
+      coordinateSystem: undefined,
+      universalTransition: true,
+      animationDurationUpdate: 1000,
+      renderItem: function (params, api) {
+        var idx = params.dataIndex;
+        var viewSize = Math.min(api.getWidth(), api.getHeight());
+        var r0 = ((parseFloat(radius[0]) / 100) * viewSize) / 2;
+        var r1 = ((parseFloat(radius[1]) / 100) * viewSize) / 2;
+        var cx = api.getWidth() * 0.5;
+        var cy = api.getHeight() * 0.5;
+        var size = viewSize / 50;
+        var points = parliamentLayout(
+          angles[idx],
+          angles[idx + 1],
+          Math.PI,
+          r0,
+          r1,
+          size + 3
+        );
+
+        const rotateRad = Math.PI / 2;
+        const rotPoints = points.map(pt => {
+          const x0 = pt[0];
+          const y0 = pt[1];
+          const x = x0 * Math.cos(rotateRad) + y0 * Math.sin(rotateRad);
+          const y = -x0 * Math.sin(rotateRad) + y0 * Math.cos(rotateRad);
+          return [x, y];
+        });
+
+        return {
+          type: 'group',
+          children: rotPoints.map(function (pt) {
+            return {
+              type: 'circle',
+              autoBatch: true,
+              shape: {
+                cx: cx + pt[0],
+                cy: cy + pt[1],
+                r: size / 2
+              },
+              style: {
+                fill: defaultPalette[idx]
+              }
+            };
+          })
+        };
+      }
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left',
+      top: 'center',
+      textStyle: {
+        color: '#333'
+      }
+    }
+  };
+})();
+
+myChart.setOption(parliamentOption);
+
+window.addEventListener('resize', () => myChart.resize());
+</script>
+</body>
+</html>
