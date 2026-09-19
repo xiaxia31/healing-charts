@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>短板问题雷达图</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    html,body{height:100%;margin:0;background:transparent!important;}
+    #chart{width:100%;height:100%;background:transparent!important;}
+    #tooltip{
+      position:absolute;
+      display:none;
+      background:rgba(20,20,20,0.88);
+      color:#fff;
+      padding:8px 14px;
+      border-radius:6px;
+      font-size:14px;
+      font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+      pointer-events:none;
+      z-index:10;
+      white-space:nowrap;
+      box-shadow:0 4px 12px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body style="background:transparent;">
+<div id="chart"></div>
+<div id="tooltip"></div>
+<script>
+var myChart = echarts.init(document.getElementById('chart'), null, {
+  renderer: 'canvas'
+});
+
+var indicators = [
+  { name: '消费后产生空虚感或愧疚感', max: 60, value: 49.94 },
+  { name: '同质化严重', max: 60, value: 41.35 },
+  { name: '容易产生依赖', max: 60, value: 39.63 },
+  { name: '价格与价值不匹配', max: 60, value: 29.94 },
+  { name: '治标不治本', max: 60, value: 28.96 },
+  { name: '效果短暂', max: 60, value: 13.37 },
+  { name: '个性化不足', max: 60, value: 9.45 },
+  { name: '存在潜在健康风险', max: 60, value: 3.44 }
+];
+
+var fullValues = indicators.map(function(item) { return item.value; });
+
+var option = {
+  backgroundColor: 'transparent',
+  radar: {
+    indicator: indicators.map(function(item) {
+      return { name: item.name, max: item.max };
+    }),
+    axisName: {
+      color: '#333',
+      fontSize: 12
+    },
+    splitArea: {
+      areaStyle: {
+        color: ['rgba(201,120,92,0.02)', 'rgba(201,120,92,0.05)', 'rgba(201,120,92,0.08)', 'rgba(201,120,92,0.11)']
+      }
+    },
+    splitLine: {
+      lineStyle: { color: 'rgba(201,120,92,0.2)' }
+    },
+    axisLine: {
+      lineStyle: { color: 'rgba(201,120,92,0.2)' }
+    }
+  },
+  series: [{
+    name: '短板问题',
+    type: 'radar',
+    data: [{
+      value: fullValues,
+      name: '占比',
+      symbol: 'circle',
+      symbolSize: 6,
+      itemStyle: { color: '#c9785c' },
+      areaStyle: { color: 'rgba(201,120,92,0.15)' },
+      lineStyle: { color: '#c9785c', width: 2 }
+    }]
+  }]
+};
+
+myChart.setOption(option);
+window.addEventListener('resize', function() { myChart.resize(); });
+
+var tooltip = document.getElementById('tooltip');
+var chartEl = document.getElementById('chart');
+var activeIdx = -1;
+
+chartEl.addEventListener('mousemove', function(e) {
+  var rect = chartEl.getBoundingClientRect();
+  var cx = rect.width / 2;
+  var cy = rect.height / 2;
+  var dx = e.clientX - rect.left - cx;
+  var dy = e.clientY - rect.top - cy;
+  var dist = Math.sqrt(dx * dx + dy * dy);
+
+  var r = Math.min(rect.width, rect.height) * 0.38;
+  var innerR = r * 0.28;
+
+  if (dist < innerR || dist > r * 1.2) {
+    if (activeIdx !== -1) {
+      activeIdx = -1;
+      resetChart();
+    }
+    tooltip.style.display = 'none';
+    return;
+  }
+
+  // 计算鼠标角度（12点方向=0度，顺时针）
+  // atan2(dx, -dy): 右侧=90度, 下方=180度, 左侧=270度
+  // ECharts radar: 第一个指标=0度(上方), 顺时针排列, 逆时针角度递增
+  var angle = Math.atan2(dx, -dy) * 180 / Math.PI;
+  if (angle < 0) angle += 360;
+  // 反转方向：ECharts的顺时针 = atan2的逆时针
+  angle = (360 - angle) % 360;
+
+  var total = indicators.length;
+  var step = 360 / total;
+  var idx = Math.round(angle / step) % total;
+
+  // 检查是否在该指标的扇形范围内
+  var centerAngle = idx * step;
+  var diff = Math.abs(angle - centerAngle);
+  if (diff > 180) diff = 360 - diff;
+
+  if (diff > step / 2) {
+    if (activeIdx !== -1) {
+      activeIdx = -1;
+      resetChart();
+    }
+    tooltip.style.display = 'none';
+    return;
+  }
+
+  if (idx !== activeIdx) {
+    activeIdx = idx;
+    highlightSingle(idx);
+  }
+
+  tooltip.style.display = 'block';
+  tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+  tooltip.style.top = (e.clientY - rect.top + 15) + 'px';
+  tooltip.innerHTML = '<b>' + indicators[idx].name + '</b><br/>占比：' + indicators[idx].value + '%';
+});
+
+chartEl.addEventListener('mouseleave', function() {
+  activeIdx = -1;
+  resetChart();
+  tooltip.style.display = 'none';
+});
+
+function resetChart() {
+  myChart.setOption({
+    radar: {
+      indicator: indicators.map(function(item) {
+        return { name: item.name, max: item.max };
+      }),
+      axisName: { color: '#333', fontSize: 12 }
+    },
+    series: [{
+      data: [{
+        value: fullValues,
+        name: '占比',
+        symbol: 'circle',
+        symbolSize: 6,
+        itemStyle: { color: '#c9785c' },
+        areaStyle: { color: 'rgba(201,120,92,0.15)' },
+        lineStyle: { color: '#c9785c', width: 2 }
+      }]
+    }]
+  });
+}
+
+function highlightSingle(idx) {
+  // 只显示被选中的那个指标，其他设为0
+  var newValues = indicators.map(function(item, i) {
+    return i === idx ? item.value : 0;
+  });
+
+  myChart.setOption({
+    radar: {
+      indicator: indicators.map(function(item, i) {
+        return {
+          name: item.name,
+          max: item.max,
+          nameTextStyle: {
+            color: i === idx ? '#c9785c' : '#bbb',
+            fontSize: i === idx ? 14 : 12,
+            fontWeight: i === idx ? 'bold' : 'normal'
+          }
+        };
+      }),
+      axisName: { color: '#333', fontSize: 12 }
+    },
+    series: [{
+      data: [{
+        value: newValues,
+        name: '占比',
+        symbol: 'circle',
+        symbolSize: function(val, params) {
+          return params.dataIndex === idx ? 10 : 0;
+        },
+        itemStyle: { color: '#c9785c' },
+        areaStyle: { color: 'rgba(201,120,92,0.35)' },
+        lineStyle: { color: '#c9785c', width: 3 }
+      }]
+    }]
+  });
+}
+</script>
+</body>
+</html>
