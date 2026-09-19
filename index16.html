@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0; background: transparent;">
+  <div id="container" style="height: 100%; background: transparent;"></div>
+
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+  <script type="text/javascript">
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+
+    var option;
+
+    option = {
+  backgroundColor: 'transparent',
+  tooltip: {
+    trigger: 'item'
+  },
+  color: [
+    '#42A870',
+    '#4FB37C',
+    '#5CBD88',
+    '#69C793',
+    '#75D19F',
+    '#81DBAB',
+    '#8DE5B6',
+    '#A2E9BC',
+    '#B7EDC2',
+    '#CCF1C8',
+    '#FFD480',
+    '#82C9D8',
+    '#47A575'
+  ],
+  series: {
+    type: 'sankey',
+    layout: 'none',
+    left: 70,
+    top: 20,
+    right: 160,
+    bottom: 20,
+    emphasis: {
+      focus: 'adjacency'
+    },
+    nodeWidth: 20,
+    nodeGap: 12,
+    data: [
+      { name: '上海市',itemStyle:{color:'#42A870'} },
+      { name: '广东省',itemStyle:{color:'#4FB37C'} },
+      { name: '四川省',itemStyle:{color:'#5CBD88'} },
+      { name: '北京市',itemStyle:{color:'#69C793'} },
+      { name: '浙江省',itemStyle:{color:'#75D19F'} },
+      { name: '江苏省',itemStyle:{color:'#81DBAB'} },
+      { name: '安徽省',itemStyle:{color:'#8DE5B6'} },
+      { name: '山东省',itemStyle:{color:'#A2E9BC'} },
+      { name: '江西省',itemStyle:{color:'#B7EDC2'} },
+      { name: '云南省',itemStyle:{color:'#CCF1C8'} },
+      { name: '1次/月',itemStyle:{color:'#FFD480'} },
+      { name: '2次/月',itemStyle:{color:'#82C9D8'} },
+      { name: '3次/月',itemStyle:{color:'#47A575'} }
+    ],
+    links: [
+      { source: '上海市', target: '1次/月', value: 15203,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '上海市', target: '2次/月', value: 12059,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '上海市', target: '3次/月', value: 2541,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '广东省', target: '1次/月', value: 13582,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '广东省', target: '2次/月', value: 9899,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '广东省', target: '3次/月', value: 2420,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '四川省', target: '1次/月', value: 10598,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '四川省', target: '2次/月', value: 6540,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '四川省', target: '3次/月', value: 1873,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '北京市', target: '1次/月', value: 9851,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '北京市', target: '2次/月', value: 5842,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '北京市', target: '3次/月', value: 1755,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '浙江省', target: '1次/月', value: 8570,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '浙江省', target: '2次/月', value: 5651,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '浙江省', target: '3次/月', value: 1702,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '江苏省', target: '1次/月', value: 7921,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '江苏省', target: '2次/月', value: 5012,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '江苏省', target: '3次/月', value: 1653,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '安徽省', target: '1次/月', value: 7650,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '安徽省', target: '2次/月', value: 4103,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '安徽省', target: '3次/月', value: 1501,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '山东省', target: '1次/月', value: 6845,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '山东省', target: '2次/月', value: 3989,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '山东省', target: '3次/月', value: 1394,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '江西省', target: '1次/月', value: 6637,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '江西省', target: '2次/月', value: 3158,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '江西省', target: '3次/月', value: 1158,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '云南省', target: '1次/月', value: 6218,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '云南省', target: '2次/月', value: 2575,lineStyle:{color:'gradient',curveness:0.5}},
+      { source: '云南省', target: '3次/月', value: 987,lineStyle:{color:'gradient',curveness:0.5}}
+    ],
+    lineStyle: {
+      curveness: 0.5,
+      opacity: 0.65
+    },
+    label:{
+      fontSize:13,
+      color:'#20593C'
+    }
+  }
+};
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+  </script>
+</body>
+</html>
