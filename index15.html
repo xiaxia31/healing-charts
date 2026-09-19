@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>疗愈经济产品类型热度</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;background:transparent;}
+body{display:flex;align-items:center;justify-content:center;font-family:"PingFang SC","Microsoft YaHei",sans-serif;}
+#wrap{position:relative;width:760px;height:600px;}
+svg{display:block;}
+.bar-group{cursor:pointer;}
+.bar-bg{fill:rgba(201,120,92,0.06);rx:8;ry:8;}
+.bar-fill{rx:8;ry:8;transition:opacity 0.2s;}
+.bar-label{font-size:13px;fill:#333;font-weight:600;}
+.bar-value{font-size:16px;font-weight:800;}
+.bar-icon{opacity:0.7;}
+.bar-group:hover .bar-fill{opacity:1;}
+.bar-group:hover .bar-bg{fill:rgba(201,120,92,0.12);}
+.bar-group:hover .bar-label{fill:#c9785c;}
+.dim{opacity:0.15;transition:opacity 0.3s;}
+#tooltip{
+  position:absolute;
+  display:none;
+  background:rgba(20,20,20,0.88);
+  color:#fff;
+  padding:10px 16px;
+  border-radius:8px;
+  font-size:13px;
+  pointer-events:none;
+  z-index:10;
+  white-space:nowrap;
+  box-shadow:0 6px 20px rgba(0,0,0,0.35);
+  line-height:1.6;
+}
+</style>
+</head>
+<body style="background:transparent;">
+<div id="wrap">
+<svg id="svg" width="760" height="600" xmlns="http://www.w3.org/2000/svg"></svg>
+<div id="tooltip"></div>
+</div>
+<script>
+var data = [
+  {name:'自然疗愈文旅', value:40.25, color:'#c9785c', icon:'🌿'},
+  {name:'"植物系"疗愈手作', value:39.14, color:'#d4a95a', icon:'🌱'},
+  {name:'AI情感陪伴', value:37.91, color:'#7ba687', icon:'🤖'},
+  {name:'情绪赋能型商业空间\n睡眠康养主题酒店', value:33.13, color:'#6b8cae', icon:'🏨'},
+  {name:'情绪觉察游戏化工具', value:28.83, color:'#9b8ec4', icon:'🎮'},
+  {name:'小程序/app\n每日微行动推送', value:16.20, color:'#e8a87c', icon:'📱'},
+  {name:'情绪追踪可视化工具\n睡眠长期管理方案', value:15.71, color:'#8a7e70', icon:'📊'},
+  {name:'高压群体情绪解决方案\n学生/应届生/职场过渡期', value:10.18, color:'#b0c4a8', icon:'🎯'}
+];
+
+var svg = document.getElementById('svg');
+var tooltip = document.getElementById('tooltip');
+var ns = 'http://www.w3.org/2000/svg';
+
+var maxVal = 40.25;
+var chartLeft = 190;
+var chartRight = 640;
+var chartWidth = chartRight - chartLeft;
+var rowHeight = 62;
+var startTop = 25;
+var barHeight = 32;
+var activeIdx = -1;
+
+data.forEach(function(item, i) {
+  var y = startTop + i * rowHeight;
+  var barW = (item.value / maxVal) * chartWidth;
+  var barY = y + (rowHeight - barHeight) / 2;
+
+  var g = document.createElementNS(ns, 'g');
+  g.setAttribute('class', 'bar-group');
+  g.setAttribute('data-idx', i);
+
+  // 背景轨道
+  var bg = document.createElementNS(ns, 'rect');
+  bg.setAttribute('class', 'bar-bg');
+  bg.setAttribute('x', chartLeft);
+  bg.setAttribute('y', barY);
+  bg.setAttribute('width', chartWidth);
+  bg.setAttribute('height', barHeight);
+  g.appendChild(bg);
+
+  // 渐变定义
+  var gradId = 'grad' + i;
+  var defs = document.createElementNS(ns, 'defs');
+  var grad = document.createElementNS(ns, 'linearGradient');
+  grad.setAttribute('id', gradId);
+  grad.setAttribute('x1', '0%');
+  grad.setAttribute('y1', '0%');
+  grad.setAttribute('x2', '100%');
+  grad.setAttribute('y2', '0%');
+  var stop1 = document.createElementNS(ns, 'stop');
+  stop1.setAttribute('offset', '0%');
+  stop1.setAttribute('stop-color', item.color);
+  stop1.setAttribute('stop-opacity', '0.5');
+  grad.appendChild(stop1);
+  var stop2 = document.createElementNS(ns, 'stop');
+  stop2.setAttribute('offset', '100%');
+  stop2.setAttribute('stop-color', item.color);
+  stop2.setAttribute('stop-opacity', '1');
+  grad.appendChild(stop2);
+  defs.appendChild(grad);
+  g.appendChild(defs);
+
+  // 填充条
+  var fill = document.createElementNS(ns, 'rect');
+  fill.setAttribute('class', 'bar-fill');
+  fill.setAttribute('x', chartLeft);
+  fill.setAttribute('y', barY);
+  fill.setAttribute('width', barW);
+  fill.setAttribute('height', barHeight);
+  fill.setAttribute('fill', 'url(#' + gradId + ')');
+  g.appendChild(fill);
+
+  // 圆形端点
+  var dot = document.createElementNS(ns, 'circle');
+  dot.setAttribute('cx', chartLeft + barW);
+  dot.setAttribute('cy', barY + barHeight / 2);
+  dot.setAttribute('r', 7);
+  dot.setAttribute('fill', '#fff');
+  dot.setAttribute('stroke', item.color);
+  dot.setAttribute('stroke-width', '3');
+  g.appendChild(dot);
+
+  // 数值标签
+  var valText = document.createElementNS(ns, 'text');
+  valText.setAttribute('class', 'bar-value');
+  valText.setAttribute('x', chartLeft + barW + 14);
+  valText.setAttribute('y', barY + barHeight / 2 + 6);
+  valText.setAttribute('fill', item.color);
+  valText.textContent = item.value + '%';
+  g.appendChild(valText);
+
+  // 左侧名称（可能多行）
+  var lines = item.name.split('\n');
+  lines.forEach(function(line, li) {
+    var label = document.createElementNS(ns, 'text');
+    label.setAttribute('class', 'bar-label');
+    label.setAttribute('x', chartLeft - 12);
+    label.setAttribute('y', barY + barHeight / 2 + 5 + (li - (lines.length - 1) / 2) * 16);
+    label.setAttribute('text-anchor', 'end');
+    label.textContent = line;
+    g.appendChild(label);
+  });
+
+  // 左侧图标圆（最左边，与文字隔开）
+  var iconCircle = document.createElementNS(ns, 'circle');
+  iconCircle.setAttribute('cx', 22);
+  iconCircle.setAttribute('cy', barY + barHeight / 2);
+  iconCircle.setAttribute('r', 15);
+  iconCircle.setAttribute('fill', item.color);
+  iconCircle.setAttribute('opacity', '0.15');
+  g.appendChild(iconCircle);
+
+  var iconText = document.createElementNS(ns, 'text');
+  iconText.setAttribute('class', 'bar-icon');
+  iconText.setAttribute('x', 22);
+  iconText.setAttribute('y', barY + barHeight / 2 + 5);
+  iconText.setAttribute('text-anchor', 'middle');
+  iconText.setAttribute('font-size', '14');
+  iconText.textContent = item.icon;
+  g.appendChild(iconText);
+
+  g.addEventListener('mouseenter', function(e) {
+    activeIdx = i;
+    highlight(i);
+    var rect = document.getElementById('wrap').getBoundingClientRect();
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 15) + 'px';
+    tooltip.innerHTML = '<b>' + item.name.replace('\n', ' / ') + '</b><br/>占比：' + item.value + '%';
+  });
+
+  g.addEventListener('mousemove', function(e) {
+    var rect = document.getElementById('wrap').getBoundingClientRect();
+    tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 15) + 'px';
+  });
+
+  g.addEventListener('mouseleave', function() {
+    activeIdx = -1;
+    reset();
+    tooltip.style.display = 'none';
+  });
+
+  svg.appendChild(g);
+});
+
+function highlight(idx) {
+  var groups = svg.querySelectorAll('.bar-group');
+  groups.forEach(function(g) {
+    var i = parseInt(g.getAttribute('data-idx'));
+    if (i === idx) {
+      g.classList.remove('dim');
+    } else {
+      g.classList.add('dim');
+    }
+  });
+}
+
+function reset() {
+  var groups = svg.querySelectorAll('.bar-group');
+  groups.forEach(function(g) {
+    g.classList.remove('dim');
+  });
+}
+</script>
+</body>
+</html>
