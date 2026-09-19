@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>半圆议会图-疗愈市场问题</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    html,body{height:100%;margin:0;background:transparent;}
+    #chart{width:100%;height:100%;}
+  </style>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+const myChart = echarts.init(document.getElementById('chart'), null, {
+  renderer: 'canvas',
+  backgroundColor: 'transparent'
+});
+
+const data = [
+  { value: 50.31, name: '流量化营销大于实际价值' },
+  { value: 37.79, name: '过度娱乐化' },
+  { value: 33.13, name: '价格虚高' },
+  { value: 22.45, name: '无资质服务泛滥' },
+  { value: 17.18, name: '概念炒作' },
+  { value: 15.95, name: '治标不治本' },
+  { value: 15.95, name: '内容同质化' },
+  { value: 11.41, name: '价值浅层化' },
+  { value: 5.03, name: '忽视个体差异' },
+  { value: 2.45, name: '没有问题/满意' }
+];
+
+const defaultPalette = [
+  '#c9785c',
+  '#d4a95a',
+  '#7ba687',
+  '#6b8cae',
+  '#9b8ec4',
+  '#e8a87c',
+  '#8a7e70',
+  '#c9a98a',
+  '#b0c4a8',
+  '#d4c5a0'
+];
+
+const radius = ['30%', '80%'];
+
+const parliamentOption = (function () {
+  let sum = data.reduce(function (sum, cur) {
+    return sum + cur.value;
+  }, 0);
+  let angles = [];
+  let startAngle = -Math.PI / 2;
+  let curAngle = startAngle;
+  const totalSector = Math.PI;
+  data.forEach(function (item) {
+    angles.push(curAngle);
+    curAngle += (item.value / sum) * totalSector;
+  });
+  angles.push(startAngle + totalSector);
+
+  function parliamentLayout(startAngle, endAngle, totalAngle, r0, r1, size) {
+    let rowsCount = Math.ceil((r1 - r0) / size);
+    let points = [];
+    let r = r0;
+    for (let i = 0; i < rowsCount; i++) {
+      let totalRingSeatsNumber = Math.round((totalAngle * r) / size);
+      let newSize = (totalAngle * r) / totalRingSeatsNumber;
+      for (
+        let k = Math.floor((startAngle * r) / newSize) * newSize;
+        k < Math.floor((endAngle * r) / newSize) * newSize - 1e-6;
+        k += newSize
+      ) {
+        let angle = k / r;
+        let x = Math.cos(angle) * r;
+        let y = Math.sin(angle) * r;
+        points.push([x, y]);
+      }
+      r += size;
+    }
+    return points;
+  }
+
+  return {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'item',
+      formatter: function (params) {
+        return params.data.name + '<br/>占比：' + params.data.value + '%';
+      }
+    },
+    series: {
+      type: 'custom',
+      id: 'distribution',
+      data: data,
+      coordinateSystem: undefined,
+      universalTransition: true,
+      animationDurationUpdate: 1000,
+      renderItem: function (params, api) {
+        var idx = params.dataIndex;
+        var viewSize = Math.min(api.getWidth(), api.getHeight());
+        var r0 = ((parseFloat(radius[0]) / 100) * viewSize) / 2;
+        var r1 = ((parseFloat(radius[1]) / 100) * viewSize) / 2;
+        var cx = api.getWidth() * 0.5;
+        var cy = api.getHeight() * 0.5;
+        var size = viewSize / 50;
+        var points = parliamentLayout(
+          angles[idx],
+          angles[idx + 1],
+          Math.PI,
+          r0,
+          r1,
+          size + 3
+        );
+
+        const rotateRad = Math.PI / 2;
+        const rotPoints = points.map(function (pt) {
+          var x0 = pt[0];
+          var y0 = pt[1];
+          var x = x0 * Math.cos(rotateRad) + y0 * Math.sin(rotateRad);
+          var y = -x0 * Math.sin(rotateRad) + y0 * Math.cos(rotateRad);
+          return [x, y];
+        });
+
+        return {
+          type: 'group',
+          children: rotPoints.map(function (pt) {
+            return {
+              type: 'circle',
+              autoBatch: true,
+              shape: {
+                cx: cx + pt[0],
+                cy: cy + pt[1],
+                r: size / 2
+              },
+              style: {
+                fill: defaultPalette[idx]
+              }
+            };
+          })
+        };
+      }
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left',
+      top: 'center',
+      textStyle: {
+        color: '#333',
+        fontSize: 12
+      },
+      data: data.map(function (item) {
+        return item.name;
+      })
+    }
+  };
+})();
+
+myChart.setOption(parliamentOption);
+
+window.addEventListener('resize', function () {
+  myChart.resize();
+});
+</script>
+</body>
+</html>
