@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+<meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0; background: transparent;">
+<div id="container" style="height: 100%; background: transparent;"></div>
+
+<script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+<script type="text/javascript">
+var dom = document.getElementById('container');
+var myChart = echarts.init(dom, null, {
+  renderer: 'canvas',
+  useDirtyRect: false
+});
+
+var option;
+
+option = {
+  backgroundColor: 'transparent',
+  tooltip: {
+    trigger: 'item',
+    formatter: '{b} <br/>占比: {c}%',
+    backgroundColor: 'rgba(20,20,20,0.85)',
+    borderColor: 'rgba(255,255,255,0.15)',
+    textStyle: { color: '#fff', fontSize: 13 },
+    extraCssText: 'border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.3);'
+  },
+  color: ['#c9785c','#d4a95a','#7ba687','#6b8cae','#9b8ec4'],
+  series: [{
+    name: '情绪消费期待',
+    type: 'funnel',
+    left: '5%',
+    right: '5%',
+    top: 30,
+    bottom: 20,
+    width: '90%',
+    min: 0,
+    max: 60,
+    minSize: '12%',
+    maxSize: '100%',
+    sort: 'descending',
+    gap: 4,
+    label: {
+      position: 'inside',
+      formatter: '{b}\n{c}%',
+      color: '#fff',
+      fontSize: 13,
+      fontWeight: 'bold',
+      textShadowColor: 'rgba(0,0,0,0.3)',
+      textShadowBlur: 4
+    },
+    labelLine: {
+      show: false
+    },
+    itemStyle: {
+      opacity: 0.85,
+      borderColor: '#fff',
+      borderWidth: 3,
+      borderRadius: 2,
+      shadowColor: 'rgba(0,0,0,0.08)',
+      shadowBlur: 6,
+      shadowOffsetY: 2
+    },
+    emphasis: {
+      itemStyle: {
+        opacity: 1,
+        shadowBlur: 14,
+        shadowColor: 'rgba(0,0,0,0.2)',
+        shadowOffsetY: 4
+      },
+      label: {
+        position: 'inside',
+        fontSize: 15,
+        color: '#fff',
+        fontWeight: 'bold'
+      }
+    },
+    data: [
+      { value: 57.42, name: 'AI心理健康工具\n多模态情感识别·个性化干预·线上心理训练' },
+      { value: 52.64, name: '低门槛·平民化·日常化微疗愈服务' },
+      { value: 33.87, name: '朋辈互助·青年共居·小型情绪社群\n真实社交陪伴替代虚拟解压' },
+      { value: 22.09, name: '情绪消费升级\n即时解压→情绪能力培养·生命力赋能' },
+      { value: 12.27, name: '差异化·垂直化情绪消费产品\n针对年龄·性别·职业·人格' }
+    ]
+  }]
+};
+
+if (option && typeof option === 'object') {
+  myChart.setOption(option);
+}
+
+window.addEventListener('resize', myChart.resize);
+</script>
+</body>
+</html>
