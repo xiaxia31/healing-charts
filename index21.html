@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>html,body{height:100%;margin:0;background:transparent}#chart{width:100%;height:100%;background:transparent}</style>
+</head>
+<body style="background:transparent;">
+<div id="chart"></div>
+<script>
+const chart = echarts.init(document.getElementById('chart'), null, { renderer:'canvas' });
+
+const data = [
+  {value:75.5, name:'不知道如何处理职场人际关系'},
+  {value:71.8, name:'不熟悉工作内容，不知如何上手'},
+  {value:50.3, name:'缺乏工作所需要的技能'},
+  {value:47.2, name:'不了解企业文化和氛围'},
+  {value:30.8, name:'难以适应工作节奏'}
+];
+// 从小到大排序，由内向外排布
+const order = [...data].sort((a,b)=>a.value-b.value);
+// 颜色数组反转
+const colors = ['#c9785c','#d4a95a','#7ba687','#6b8cae','#9b8ec4'].reverse();
+let inner = 8;
+const radiusList = order.map((d,i)=>{
+  const outer = inner + d.value*0.22;
+  const r = [inner+'%', outer+'%'];
+  inner = outer + 4; //环之间留白分开
+  return r;
+});
+
+const series = order.map((d,i)=>({
+  type:'pie',
+  radius: radiusList[i],
+  center:['50%','55%'],
+  startAngle:180,
+  endAngle:0,
+  label:{
+    show:true,
+    position:'inside',
+    fontSize:13,
+    fontWeight:'bold',
+    color:'#000000',
+    formatter:'{c}'
+  },
+  labelLine:{show:false},
+  itemStyle:{color:colors[i]},
+  data:[
+    d,
+    {value:100-d.value, itemStyle:{color:'transparent'}, tooltip:{show:false}, label:{show:false}}
+  ]
+}));
+
+chart.setOption({
+  backgroundColor: 'transparent',
+  tooltip:{
+    trigger:'item',
+    formatter:(p)=>p.data.name+': '+p.data.value+'%'
+  },
+  series
+});
+window.addEventListener('resize',()=>chart.resize());
+</script>
+</body>
+</html>
