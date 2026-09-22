@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>展开详情卡片模板</title>
+<style>
+  :root {
+    --bg: transparent;
+    --bg2: rgba(255,255,255,0.85);
+    --ink: #2D2520;
+    --muted: #8A7E70;
+    --rule: rgba(224,213,197,0.5);
+    --accent: #7BA687;
+    --accent2: #C9785C;
+    --blue: #6B8CAE;
+    --gold: #D4A95A;
+    --lavender: #9B8EC4;
+    --peach: #E8A87C;
+    --paper: rgba(237,228,211,0.5);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: transparent; }
+  body {
+    background: transparent;
+    color: var(--ink);
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    padding: 40px 8%;
+  }
+
+  /* ===== 新闻案例卡片容器 ===== */
+  .news-section { padding: 40px 0; position: relative; }
+  .news-header { margin-bottom: 32px; display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .news-header .news-label {
+    font-size: 12px; letter-spacing: 0.25em;
+    color: #fff; background: var(--accent2); padding: 4px 14px; border-radius: 20px; font-weight: 700;
+  }
+  .news-header h3 { font-size: 24px; font-weight: 700; }
+  .news-header .news-hint { font-size: 13px; color: var(--muted); margin-left: auto; }
+
+  /* ===== 卡片网格 ===== */
+  .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+
+  /* ===== 单个卡片 ===== */
+  .news-card {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    backdrop-filter: blur(8px);
+  }
+  .news-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 36px rgba(45,37,32,0.12);
+    border-color: var(--accent);
+  }
+
+  /* 卡片图片 */
+  .news-card .news-img {
+    width: 100%; height: 160px; object-fit: cover; display: block;
+    transition: transform 0.5s ease;
+  }
+  .news-card:hover .news-img { transform: scale(1.05); }
+
+  /* 卡片正文区 */
+  .news-card .news-body { padding: 20px 24px; }
+  .news-card .news-tag {
+    display: inline-block; font-size: 10px;
+    letter-spacing: 0.1em; color: #fff; padding: 2px 8px; border-radius: 3px; margin-bottom: 10px;
+  }
+  .news-card .news-title { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 8px; }
+  .news-card .news-summary { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+  /* ===== 展开/收起详情 ===== */
+  .news-card .news-detail {
+    max-height: 0; overflow: hidden; transition: max-height 0.5s ease;
+  }
+  .news-card.expanded .news-detail { max-height: 500px; }
+  .news-card .news-detail-inner {
+    padding: 0 24px 20px; font-size: 14px; line-height: 1.8; color: var(--ink);
+    border-top: 1px solid var(--rule); margin-top: 12px; padding-top: 16px;
+  }
+  .news-card .news-source { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  /* 底部展开按钮 */
+  .news-card .news-toggle {
+    padding: 8px 24px 20px; font-size: 12px; color: var(--accent2); font-weight: 700;
+    letter-spacing: 0.1em; display: flex; align-items: center; gap: 6px;
+  }
+  .news-card .news-toggle .arrow { transition: transform 0.3s; }
+  .news-card.expanded .news-toggle .arrow { transform: rotate(180deg); }
+</style>
+</head>
+<body>
+
+<!-- ===== 新闻案例卡片区域 ===== -->
+<div class="news-section">
+  <div class="news-header">
+    <span class="news-label">NEWS CASE</span>
+    <h3>市场前沿</h3>
+    <span class="news-hint">点击卡片查看详情 ↓</span>
+  </div>
+  <div class="news-grid">
+
+    <!-- 卡片1 -->
+    <div class="news-card" onclick="this.classList.toggle('expanded')">
+      <img class="news-img" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Young people doing pottery ceramic handcraft workshop warm lighting&image_size=landscape_4_3" alt="手作DIY">
+      <div class="news-body">
+        <span class="news-tag" style="background:var(--blue);">消费趋势</span>
+        <div class="news-title">"手作DIY"成年轻人周末新标配，美团搜索量增200%</div>
+        <div class="news-summary">陶艺、Tufting、银饰DIY位列手作品类前三，消费者中18-30岁占比达72%。</div>
+      </div>
+      <div class="news-detail"><div class="news-detail-inner">
+        <p>美团数据显示，2025年上半年"手作DIY"相关搜索量同比增长200%，其中陶艺体验增长最快。北京一家陶艺工作室主理人表示："2023年我们日均接待15人，现在日均50人起步，周末需要提前一周预约。"消费者中18-30岁青年占比达72%，女性占比68%。手作DIY正从"小众爱好"变成"社交刚需"。</p>
+        <div class="news-source">来源：美团消费趋势报告 · 2025.07</div>
+      </div></div>
+      <div class="news-toggle">展开详情 <span class="arrow">↓</span></div>
+    </div>
+
+    <!-- 卡片2 -->
+    <div class="news-card" onclick="this.classList.toggle('expanded')">
+      <img class="news-img" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Singing bowl sound healing therapy session cozy room&image_size=landscape_4_3" alt="颂钵疗愈">
+      <div class="news-body">
+        <span class="news-tag" style="background:var(--accent);">行业风向</span>
+        <div class="news-title">颂钵疗愈美团搜索量增423%，专业岗位缺口500万</div>
+        <div class="news-summary">小红书颂钵笔记超51万篇，全球声音疗法市场预计2028年达52.9亿美元。</div>
+      </div>
+      <div class="news-detail"><div class="news-detail-inner">
+        <p>美团数据显示"颂钵"搜索量同比增长423%，小红书相关笔记超51万篇。锦州海关数据：颂钵出口额1365.8万元。全球声音疗法市场从27.3亿美元增长至预计52.9亿美元（Straits Research）。但85%的疗愈师来自3-7天速成班，92%的证书"没啥含金量"，专业岗位缺口达500万人。</p>
+        <div class="news-source">来源：头条·疗愈先锋 · 2025.08</div>
+      </div></div>
+      <div class="news-toggle">展开详情 <span class="arrow">↓</span></div>
+    </div>
+
+    <!-- 卡片3 -->
+    <div class="news-card" onclick="this.classList.toggle('expanded')">
+      <img class="news-img" src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Cozy cat cafe with people relaxing and petting cats warm atmosphere&image_size=landscape_4_3" alt="撸猫馆">
+      <div class="news-body">
+        <span class="news-tag" style="background:var(--gold);">消费案例</span>
+        <div class="news-title">128元一次的撸猫馆：当专业咨询"够不着"，年轻人把情绪交给猫</div>
+        <div class="news-summary">93%的青年从未走进心理咨询室，一线城市单次咨询均价500-800元。</div>
+      </div>
+      <div class="news-detail"><div class="news-detail-inner">
+        <p>全国持证心理咨询师超130万人，但实际从业者不足3万。一线城市单次咨询均价500-800元，平均排队等候2-4周。当专业渠道"够不着"，年轻人只能把情绪交给128元一次的撸猫馆、99元60分钟的颂钵体验。"不是不想看，是看不起也等不起。"一位受访青年这样说。</p>
+        <div class="news-source">来源：愈到研究院 · 2026.01</div>
+      </div></div>
+      <div class="news-toggle">展开详情 <span class="arrow">↓</span></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
