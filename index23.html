@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>性别患病率对比</title>
+<style>
+  html,body{margin:0;padding:0;background:transparent;}
+  #chart-wrap{width:100%;height:390px;position:relative;}
+  svg{display:block;}
+  .ring-group{cursor:pointer;transition:all 0.3s ease;}
+  .ring-group:hover{filter:drop-shadow(0 3px 9px rgba(0,0,0,0.12));}
+  .dim{opacity:0.25;}
+  .tooltip{
+    position:absolute;padding:8px 12px;background:rgba(30,20,30,0.92);color:#fff;
+    font-size:12px;border-radius:6px;pointer-events:none;opacity:0;
+    transition:opacity 0.2s;font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    z-index:10;line-height:1.5;white-space:nowrap;
+  }
+  .tooltip .t-title{font-weight:700;font-size:13px;margin-bottom:2px;}
+</style>
+</head>
+<body style="background:transparent;">
+<div id="chart-wrap">
+  <svg viewBox="0 0 480 390" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="gradF1" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#E88A9A"/>
+        <stop offset="100%" stop-color="#C87486"/>
+      </radialGradient>
+      <radialGradient id="gradM1" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#B4A0C8"/>
+        <stop offset="100%" stop-color="#8C6B94"/>
+      </radialGradient>
+    </defs>
+
+    <!-- 女性组（左） -->
+    <g class="ring-group" id="groupF" transform="translate(150, 180)">
+      <circle cx="0" cy="0" r="105" fill="none" stroke="#F2C8D0" stroke-width="11" opacity="0.5"/>
+      <circle cx="0" cy="0" r="79" fill="none" stroke="url(#gradF1)" stroke-width="14"
+              stroke-dasharray="223.37 273" stroke-dashoffset="0"
+              transform="rotate(-90)"/>
+      <circle cx="0" cy="0" r="49" fill="#C87486"/>
+      <text x="0" y="-4" text-anchor="middle" fill="#fff" font-size="21" font-weight="800"
+            font-family="PingFang SC, Microsoft YaHei, sans-serif">45.00%</text>
+      <text x="0" y="17" text-anchor="middle" fill="#fff" font-size="11" font-weight="600"
+            font-family="PingFang SC, Microsoft YaHei, sans-serif" opacity="0.9">女性</text>
+    </g>
+
+    <!-- 男性组（右） -->
+    <g class="ring-group" id="groupM" transform="translate(350, 180)">
+      <circle cx="0" cy="0" r="105" fill="none" stroke="#D1C2E0" stroke-width="11" opacity="0.5"/>
+      <circle cx="0" cy="0" r="79" fill="none" stroke="url(#gradM1)" stroke-width="14"
+              stroke-dasharray="155.86 340.51" stroke-dashoffset="0"
+              transform="rotate(-90)"/>
+      <circle cx="0" cy="0" r="49" fill="#8C6B94"/>
+      <text x="0" y="-4" text-anchor="middle" fill="#fff" font-size="21" font-weight="800"
+            font-family="PingFang SC, Microsoft YaHei, sans-serif">31.40%</text>
+      <text x="0" y="17" text-anchor="middle" fill="#fff" font-size="11" font-weight="600"
+            font-family="PingFang SC, Microsoft YaHei, sans-serif" opacity="0.9">男性</text>
+    </g>
+
+    <!-- 底部对比标注 -->
+    <text x="250" y="345" text-anchor="middle" fill="#665555" font-size="13"
+          font-family="PingFang SC, Microsoft YaHei, sans-serif">
+      女性患病率高于男性
+      <tspan fill="#C87486" font-weight="800"> 13.6% </tspan>
+    </text>
+  </svg>
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script>
+  const wrap = document.getElementById('chart-wrap');
+  const tooltip = document.getElementById('tooltip');
+  const groupF = document.getElementById('groupF');
+  const groupM = document.getElementById('groupM');
+
+  function showTip(e, title, val){
+    tooltip.innerHTML = `<div class="t-title">${title}</div>患病率：${val}`;
+    tooltip.style.opacity = '1';
+    const rect = wrap.getBoundingClientRect();
+    tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 10) + 'px';
+  }
+  function hideTip(){ tooltip.style.opacity = '0'; }
+
+  groupF.addEventListener('mouseenter', e=>{
+    groupM.classList.add('dim');
+    groupF.style.transform = 'translate(150px, 177px) scale(1.04)';
+    showTip(e, '女性', '45.00%');
+  });
+  groupF.addEventListener('mousemove', e=>{
+    const rect = wrap.getBoundingClientRect();
+    tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 10) + 'px';
+  });
+  groupF.addEventListener('mouseleave', ()=>{
+    groupM.classList.remove('dim');
+    groupF.style.transform = 'translate(150px, 180px)';
+    hideTip();
+  });
+
+  groupM.addEventListener('mouseenter', e=>{
+    groupF.classList.add('dim');
+    groupM.style.transform = 'translate(350px, 177px) scale(1.04)';
+    showTip(e, '男性', '31.40%');
+  });
+  groupM.addEventListener('mousemove', e=>{
+    const rect = wrap.getBoundingClientRect();
+    tooltip.style.left = (e.clientX - rect.left + 10) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 10) + 'px';
+  });
+  groupM.addEventListener('mouseleave', ()=>{
+    groupF.classList.remove('dim');
+    groupM.style.transform = 'translate(350px, 180px)';
+    hideTip();
+  });
+</script>
+</body>
+</html>
