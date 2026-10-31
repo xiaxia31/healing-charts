@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>女性就医行为棒棒糖图</title>
+<style>
+  html,body{margin:0;padding:0;background:transparent;}
+  #chart-wrap{width:100%;height:200px;position:relative;}
+  svg{display:block;}
+  .lollipop-bar{cursor:pointer;}
+  .dim{opacity:0.25;}
+  .tooltip{
+    position:absolute;padding:6px 10px;background:rgba(30,20,30,0.92);color:#fff;
+    font-size:11px;border-radius:5px;pointer-events:none;opacity:0;
+    transition:opacity 0.2s;font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    z-index:10;line-height:1.5;white-space:nowrap;
+  }
+  .tooltip .t-title{font-weight:700;font-size:12px;margin-bottom:2px;}
+  .tooltip .t-desc{color:#d4c8d8;font-size:10px;}
+</style>
+</head>
+<body style="background:transparent;">
+<div id="chart-wrap">
+  <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" id="lolliSvg"></svg>
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script>
+const data = [
+  { name: '忍痛不就医', value: 60.7, desc: '疼痛发作时优先选择忍耐、自行休息', color: '#C87486' },
+  { name: '从未因痛经就诊', value: 71.3, desc: '长期回避就医', color: '#8C6B94' },
+  { name: '首选就医', value: 8.1, desc: '第一选择去医院就诊', color: '#B4A0C8' }
+];
+
+const W = 240, H = 150;
+const padL = 72, padR = 30, padT = 14, padB = 14;
+const chartW = W - padL - padR;
+const chartH = H - padT - padB;
+const rowH = chartH / data.length;
+const maxVal = 80;
+
+const svg = document.getElementById('lolliSvg');
+const tooltip = document.getElementById('tooltip');
+const wrap = document.getElementById('chart-wrap');
+
+// 基线
+const baseLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+baseLine.setAttribute('x1', padL);
+baseLine.setAttribute('y1', padT);
+baseLine.setAttribute('x2', padL);
+baseLine.setAttribute('y2', padT + chartH);
+baseLine.setAttribute('stroke', '#e8e0e8');
+baseLine.setAttribute('stroke-width', '1');
+svg.appendChild(baseLine);
+
+data.forEach((d, i)=>{
+  const cy = padT + rowH*i + rowH/2;
+  const barW = (d.value/maxVal) * chartW;
+  const cx = padL + barW;
+
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.classList.add('lollipop-bar');
+  g.dataset.index = i;
+
+  // 浅灰色轨道线
+  const track = document.createElementNS('http://www.w3.org/2000/svg','line');
+  track.setAttribute('x1', padL);
+  track.setAttribute('y1', cy);
+  track.setAttribute('x2', padL + chartW);
+  track.setAttribute('y2', cy);
+  track.setAttribute('stroke', '#f0eaf0');
+  track.setAttribute('stroke-width', '1');
+  track.setAttribute('stroke-dasharray', '2,3');
+  g.appendChild(track);
+
+  // 棒棒糖杆
+  const stick = document.createElementNS('http://www.w3.org/2000/svg','line');
+  stick.setAttribute('x1', padL);
+  stick.setAttribute('y1', cy);
+  stick.setAttribute('x2', cx);
+  stick.setAttribute('y2', cy);
+  stick.setAttribute('stroke', d.color);
+  stick.setAttribute('stroke-width', '1.5');
+  stick.setAttribute('stroke-linecap', 'round');
+  g.appendChild(stick);
+
+  // 棒棒糖头（圆）
+  const head = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  head.setAttribute('cx', cx);
+  head.setAttribute('cy', cy);
+  head.setAttribute('r', '6');
+  head.setAttribute('fill', d.color);
+  head.setAttribute('stroke', '#fff');
+  head.setAttribute('stroke-width', '1.5');
+  g.appendChild(head);
+
+  // 数值标签
+  const valLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
+  valLabel.setAttribute('x', cx + 7);
+  valLabel.setAttribute('y', cy + 1);
+  valLabel.setAttribute('text-anchor', 'start');
+  valLabel.setAttribute('dominant-baseline', 'middle');
+  valLabel.setAttribute('fill', d.color);
+  valLabel.setAttribute('font-size', '9');
+  valLabel.setAttribute('font-weight', '700');
+  valLabel.setAttribute('font-family', 'Arial, sans-serif');
+  valLabel.textContent = d.value + '%';
+  g.appendChild(valLabel);
+
+  // 名称标签（左侧）
+  const nameLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
+  nameLabel.setAttribute('x', padL - 6);
+  nameLabel.setAttribute('y', cy - 1.5);
+  nameLabel.setAttribute('text-anchor', 'end');
+  nameLabel.setAttribute('dominant-baseline', 'middle');
+  nameLabel.setAttribute('fill', '#4a3a4a');
+  nameLabel.setAttribute('font-size', '7.5');
+  nameLabel.setAttribute('font-weight', '600');
+  nameLabel.setAttribute('font-family', 'PingFang SC, Microsoft YaHei, sans-serif');
+  nameLabel.textContent = d.name;
+  g.appendChild(nameLabel);
+
+  // 释义标签（左侧小字）
+  const descLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
+  descLabel.setAttribute('x', padL - 6);
+  descLabel.setAttribute('y', cy + 7);
+  descLabel.setAttribute('text-anchor', 'end');
+  descLabel.setAttribute('dominant-baseline', 'middle');
+  descLabel.setAttribute('fill', '#9a8a9a');
+  descLabel.setAttribute('font-size', '6.5');
+  descLabel.setAttribute('font-family', 'PingFang SC, Microsoft YaHei, sans-serif');
+  descLabel.textContent = d.desc;
+  g.appendChild(descLabel);
+
+  svg.appendChild(g);
+
+  // 交互
+  g.addEventListener('mouseenter', e=>{
+    document.querySelectorAll('.lollipop-bar').forEach((el,j)=>{
+      if(j !== i) el.classList.add('dim');
+    });
+    const rect = wrap.getBoundingClientRect();
+    tooltip.innerHTML = `<div class="t-title">${d.name}</div><div>占比：${d.value}%</div><div class="t-desc">${d.desc}</div>`;
+    tooltip.style.opacity = '1';
+    tooltip.style.left = (e.clientX - rect.left + 8) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 8) + 'px';
+  });
+  g.addEventListener('mousemove', e=>{
+    const rect = wrap.getBoundingClientRect();
+    tooltip.style.left = (e.clientX - rect.left + 8) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 8) + 'px';
+  });
+  g.addEventListener('mouseleave', ()=>{
+    document.querySelectorAll('.lollipop-bar').forEach(el=>{
+      el.classList.remove('dim');
+    });
+    tooltip.style.opacity = '0';
+  });
+});
+</script>
+</body>
+</html>
