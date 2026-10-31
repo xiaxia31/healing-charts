@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>疼痛影响维度雷达图</title>
+<style>
+  html,body{margin:0;padding:0;background:transparent;}
+  #chart-wrap{width:100%;height:180px;position:relative;}
+  svg{display:block;}
+  .axis-hit{cursor:pointer;}
+  .dim{opacity:0.2;}
+  .tooltip{
+    position:absolute;padding:5px 8px;background:rgba(30,20,30,0.92);color:#fff;
+    font-size:10px;border-radius:4px;pointer-events:none;opacity:0;
+    transition:opacity 0.2s;font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    z-index:10;line-height:1.4;white-space:nowrap;
+  }
+  .tooltip .t-title{font-weight:700;font-size:11px;margin-bottom:1px;}
+</style>
+</head>
+<body style="background:transparent;">
+<div id="chart-wrap">
+  <svg viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" id="radarSvg">
+    <defs>
+      <radialGradient id="polyFill" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#E88A9A" stop-opacity="0.45"/>
+        <stop offset="100%" stop-color="#C87486" stop-opacity="0.25"/>
+      </radialGradient>
+    </defs>
+    <g id="radarG" transform="translate(100, 96)"></g>
+  </svg>
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script>
+const data = [
+  { name: '睡眠质量', value: 65 },
+  { name: '工作效率', value: 77.18 },
+  { name: '情绪/心理健康', value: 40 },
+  { name: '日常生活/家务', value: 45 },
+  { name: '社交活动', value: 30 },
+  { name: '亲密关系', value: 25 }
+];
+const maxVal = 85;
+const R = 55;
+const N = data.length;
+const levels = 5;
+
+const radarG = document.getElementById('radarG');
+const tooltip = document.getElementById('tooltip');
+const wrap = document.getElementById('chart-wrap');
+
+function angleOf(i){ return -Math.PI/2 + i * (2*Math.PI/N); }
+function pointAt(i, r){
+  const a = angleOf(i);
+  return [r*Math.cos(a), r*Math.sin(a)];
+}
+function polyPoints(r){
+  let pts = [];
+  for(let i=0;i<N;i++){
+    const [x,y] = pointAt(i, r);
+    pts.push(x.toFixed(1)+','+y.toFixed(1));
+  }
+  return pts.join(' ');
+}
+
+for(let l=1;l<=levels;l++){
+  const r = (l/levels)*R;
+  const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  poly.setAttribute('points', polyPoints(r));
+  poly.setAttribute('fill','none');
+  poly.setAttribute('stroke','#e2d5de');
+  poly.setAttribute('stroke-width','0.8');
+  poly.setAttribute('stroke-dasharray','2,2');
+  radarG.appendChild(poly);
+}
+
+let dataPolygonPoints = [];
+for(let i=0;i<N;i++){
+  const [x,y] = pointAt(i, R);
+  const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+  line.setAttribute('x1','0'); line.setAttribute('y1','0');
+  line.setAttribute('x2',x); line.setAttribute('y2',y);
+  line.setAttribute('stroke','#e8dce5');
+  line.setAttribute('stroke-width','0.8');
+  radarG.appendChild(line);
+
+  const [lx,ly] = pointAt(i, R+11);
+  const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+  label.setAttribute('x', lx);
+  label.setAttribute('y', ly);
+  label.setAttribute('text-anchor','middle');
+  label.setAttribute('dominant-baseline','middle');
+  label.setAttribute('fill','#4a3a4a');
+  label.setAttribute('font-size','8');
+  label.setAttribute('font-family','PingFang SC, Microsoft YaHei, sans-serif');
+  label.setAttribute('font-weight','500');
+  label.textContent = data[i].name;
+  label.classList.add('axis-label');
+  label.dataset.index = i;
+  radarG.appendChild(label);
+
+  const hit = document.createElementNS('http://www.w3.org/2000/svg','path');
+  const a0 = angleOf(i) - Math.PI/N;
+  const a1 = angleOf(i) + Math.PI/N;
+  const r0 = 0, r1 = R+7;
+  const x00 = r0*Math.cos(a0), y00 = r0*Math.sin(a0);
+  const x10 = r1*Math.cos(a0), y10 = r1*Math.sin(a0);
+  const x11 = r1*Math.cos(a1), y11 = r1*Math.sin(a1);
+  const x01 = r0*Math.cos(a1), y01 = r0*Math.sin(a1);
+  hit.setAttribute('d', `M${x00},${y00} L${x10},${y10} A${r1},${r1} 0 0 1 ${x11},${y11} L${x01},${y01} Z`);
+  hit.setAttribute('fill','transparent');
+  hit.classList.add('axis-hit');
+  hit.dataset.index = i;
+  radarG.appendChild(hit);
+
+  const vr = (data[i].value/maxVal)*R;
+  const [dx,dy] = pointAt(i, vr);
+  dataPolygonPoints.push(dx.toFixed(1)+','+dy.toFixed(1));
+}
+
+const dataPoly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+dataPoly.setAttribute('points', dataPolygonPoints.join(' '));
+dataPoly.setAttribute('fill', 'url(#polyFill)');
+dataPoly.setAttribute('stroke', '#C87486');
+dataPoly.setAttribute('stroke-width', '1.2');
+dataPoly.setAttribute('id', 'dataPoly');
+radarG.appendChild(dataPoly);
+
+for(let i=0;i<N;i++){
+  const vr = (data[i].value/maxVal)*R;
+  const [dx,dy] = pointAt(i, vr);
+  const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('cx', dx);
+  dot.setAttribute('cy', dy);
+  dot.setAttribute('r', '2.5');
+  dot.setAttribute('fill', '#C87486');
+  dot.setAttribute('stroke', '#fff');
+  dot.setAttribute('stroke-width', '1');
+  dot.classList.add('data-dot');
+  dot.dataset.index = i;
+  radarG.appendChild(dot);
+}
+
+const hits = document.querySelectorAll('.axis-hit');
+const labels = document.querySelectorAll('.axis-label');
+const dots = document.querySelectorAll('.data-dot');
+const poly = document.getElementById('dataPoly');
+
+hits.forEach(hit=>{
+  hit.addEventListener('mouseenter', e=>{
+    const idx = parseInt(hit.dataset.index);
+    poly.classList.add('dim');
+    dots.forEach((d,i)=>{ if(i!==idx) d.classList.add('dim'); });
+    labels.forEach((l,i)=>{
+      if(i===idx){ l.setAttribute('fill','#C87486'); l.setAttribute('font-size','9'); l.setAttribute('font-weight','700'); }
+      else l.classList.add('dim');
+    });
+    dots[idx].setAttribute('r','4');
+    const rect = wrap.getBoundingClientRect();
+    tooltip.innerHTML = `<div class="t-title">${data[idx].name}</div>影响占比：${data[idx].value}%`;
+    tooltip.style.opacity = '1';
+    tooltip.style.left = (e.clientX - rect.left + 6) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 6) + 'px';
+  });
+  hit.addEventListener('mousemove', e=>{
+    const rect = wrap.getBoundingClientRect();
+    tooltip.style.left = (e.clientX - rect.left + 6) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 6) + 'px';
+  });
+  hit.addEventListener('mouseleave', ()=>{
+    poly.classList.remove('dim');
+    dots.forEach((d,i)=>{ d.classList.remove('dim'); d.setAttribute('r','2.5'); });
+    labels.forEach((l,i)=>{
+      l.classList.remove('dim');
+      l.setAttribute('fill','#4a3a4a');
+      l.setAttribute('font-size','8');
+      l.setAttribute('font-weight','500');
+    });
+    tooltip.style.opacity = '0';
+  });
+});
+</script>
+</body>
+</html>
