@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>女性疼痛类型胶囊条形图</title>
+<style>
+  html,body{margin:0;padding:0;background:transparent;}
+  #chart-wrap{width:100%;height:200px;position:relative;}
+  svg{display:block;}
+  .bar-group{cursor:pointer;}
+  .dim{opacity:0.2;}
+  .tooltip{
+    position:absolute;padding:5px 8px;background:rgba(30,20,30,0.92);color:#fff;
+    font-size:11px;border-radius:4px;pointer-events:none;opacity:0;
+    transition:opacity 0.2s;font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    z-index:10;line-height:1.4;white-space:nowrap;
+  }
+  .tooltip .t-title{font-weight:700;font-size:12px;margin-bottom:1px;}
+</style>
+</head>
+<body style="background:transparent;">
+<div id="chart-wrap">
+  <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" id="chartSvg"></svg>
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script>
+const data = [
+  { name: '痛经/月经相关疼痛', value: 80, display: '80%', color: '#C87486' },
+  { name: '颈肩腰背痛', value: 46.3, display: '46.30%', color: '#8C6B94' },
+  { name: '关节痛/骨关节炎', value: 46.3, display: '46.30%', color: '#B4A0C8' },
+  { name: '偏头痛/头痛', value: 15, display: '15%', color: '#E88A9A' },
+  { name: '慢性盆腔疼痛', value: 19, display: '14-24%', color: '#D1C2E0' },
+  { name: '纤维肌痛', value: 4.2, display: '4.20%', color: '#F2C8D0' }
+];
+
+const svg = document.getElementById('chartSvg');
+const tooltip = document.getElementById('tooltip');
+const wrap = document.getElementById('chart-wrap');
+
+const barStartX = 110;
+const barEndX = 280;
+const barMaxW = barEndX - barStartX;
+const barH = 18;
+const gap = 10;
+const topY = 18;
+
+data.forEach((d, i) => {
+  const y = topY + i * (barH + gap);
+  const barW = (d.value / 85) * barMaxW;
+  const radius = barH / 2;
+
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.classList.add('bar-group');
+  g.dataset.index = i;
+
+  const track = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  track.setAttribute('x', barStartX);
+  track.setAttribute('y', y);
+  track.setAttribute('width', barMaxW);
+  track.setAttribute('height', barH);
+  track.setAttribute('rx', radius);
+  track.setAttribute('fill', '#f0e8ee');
+  g.appendChild(track);
+
+  const bar = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  bar.setAttribute('x', barStartX);
+  bar.setAttribute('y', y);
+  bar.setAttribute('width', barW);
+  bar.setAttribute('height', barH);
+  bar.setAttribute('rx', radius);
+  bar.setAttribute('fill', d.color);
+  bar.classList.add('bar-fill');
+  g.appendChild(bar);
+
+  const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+  label.setAttribute('x', barStartX - 6);
+  label.setAttribute('y', y + barH/2 + 1);
+  label.setAttribute('text-anchor','end');
+  label.setAttribute('dominant-baseline','middle');
+  label.setAttribute('fill','#3a2a3a');
+  label.setAttribute('font-size','9');
+  label.setAttribute('font-family','PingFang SC, Microsoft YaHei, sans-serif');
+  label.setAttribute('font-weight','500');
+  label.textContent = d.name;
+  label.classList.add('bar-label');
+  g.appendChild(label);
+
+  const valLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
+  valLabel.setAttribute('x', barStartX + barW + 5);
+  valLabel.setAttribute('y', y + barH/2 + 1);
+  valLabel.setAttribute('text-anchor','start');
+  valLabel.setAttribute('dominant-baseline','middle');
+  valLabel.setAttribute('fill', d.color);
+  valLabel.setAttribute('font-size','10');
+  valLabel.setAttribute('font-family','Arial, PingFang SC, sans-serif');
+  valLabel.setAttribute('font-weight','700');
+  valLabel.textContent = d.display;
+  valLabel.classList.add('bar-value');
+  g.appendChild(valLabel);
+
+  svg.appendChild(g);
+});
+
+const groups = document.querySelectorAll('.bar-group');
+
+groups.forEach(g => {
+  g.addEventListener('mouseenter', e => {
+    const idx = parseInt(g.dataset.index);
+    groups.forEach((gr, i) => {
+      if(i !== idx) gr.classList.add('dim');
+    });
+    const rect = wrap.getBoundingClientRect();
+    const d = data[idx];
+    tooltip.innerHTML = `<div class="t-title">${d.name}</div>女性患病率：${d.display}`;
+    tooltip.style.opacity = '1';
+    tooltip.style.left = (e.clientX - rect.left + 8) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 8) + 'px';
+  });
+  g.addEventListener('mousemove', e => {
+    const rect = wrap.getBoundingClientRect();
+    tooltip.style.left = (e.clientX - rect.left + 8) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 8) + 'px';
+  });
+  g.addEventListener('mouseleave', () => {
+    groups.forEach(gr => gr.classList.remove('dim'));
+    tooltip.style.opacity = '0';
+  });
+});
+</script>
+</body>
+</html>
