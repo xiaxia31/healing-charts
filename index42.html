@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>痛经缓解方式旭日图</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    html,body{height:100%;margin:0;background:transparent;}
+    #chart{width:100%;height:100%;}
+  </style>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+const myChart = echarts.init(document.getElementById('chart'), null, {
+  renderer: 'canvas',
+  backgroundColor: 'transparent'
+});
+
+const option = {
+  backgroundColor: 'transparent',
+  tooltip: {
+    trigger: 'item',
+    formatter: function(params) {
+      if (params.data.children) {
+        return params.name;
+      }
+      return params.treePathInfo.map(function(d){return d.name;}).join(' → ') + '<br/>占比：' + params.value + '%';
+    }
+  },
+  series: {
+    type: 'sunburst',
+    data: [
+      {
+        name: '95后年轻女性',
+        value: 100,
+        itemStyle: { color: '#C87486' },
+        children: [
+          { name: '口服止痛药物', value: 44.8, itemStyle: { color: '#E88A9A' } },
+          { name: '热敷/外用贴剂等物理方式', value: 39.1, itemStyle: { color: '#F2C8D0' } },
+          { name: '偏方/红糖/忍耐', value: 16.1, itemStyle: { color: '#FBE3E8' } }
+        ]
+      },
+      {
+        name: '70后年长女性',
+        value: 100,
+        itemStyle: { color: '#8C6B94' },
+        children: [
+          { name: '口服止痛药物', value: 18.9, itemStyle: { color: '#B4A0C8' } },
+          { name: '热敷/外用贴剂等物理方式', value: 58.2, itemStyle: { color: '#D1C2E0' } },
+          { name: '偏方/红糖/忍耐', value: 22.9, itemStyle: { color: '#E5DAF0' } }
+        ]
+      }
+    ],
+    radius: ['15%', '80%'],
+    label: {
+      show: true,
+      color: '#fff',
+      fontSize: 13,
+      fontFamily: 'PingFang SC, Microsoft YaHei, sans-serif',
+      fontWeight: '500'
+    },
+    itemStyle: {
+      borderColor: 'rgba(255,255,255,0.3)',
+      borderWidth: 2
+    },
+    levels: [
+      {},
+      {
+        r0: '15%',
+        r: '45%',
+        label: {
+          fontSize: 14,
+          fontWeight: '600',
+          color: '#fff'
+        }
+      },
+      {
+        r0: '45%',
+        r: '80%',
+        label: {
+          fontSize: 11,
+          color: '#333'
+        }
+      }
+    ],
+    emphasis: {
+      focus: 'ancestor',
+      itemStyle: {
+        shadowBlur: 16,
+        shadowColor: 'rgba(0,0,0,0.3)'
+      }
+    }
+  }
+};
+
+myChart.setOption(option);
+
+window.addEventListener('resize', function () {
+  myChart.resize();
+});
+</script>
+</body>
+</html>
