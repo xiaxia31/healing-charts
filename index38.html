@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不同群体痛经主动就医率</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+  html,body{margin:0;padding:0;background:transparent;}
+  #chart{width:100%;height:470px;background:transparent;}
+</style>
+</head>
+<body style="background:transparent;">
+<div id="chart"></div>
+<script>
+var chart = echarts.init(document.getElementById('chart'), null, {renderer: 'svg'});
+var option = {
+  backgroundColor: 'transparent',
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {type: 'none'}
+  },
+  grid: {
+    left: 220,
+    right: 80,
+    top: 20,
+    height: 120
+  },
+  xAxis: {
+    type: 'value',
+    max: 40,
+    axisLine: {show: false},
+    axisTick: {show: false},
+    splitLine: {show: false},
+    axisLabel: {
+      show: true,
+      color: '#666',
+      fontSize: 14
+    }
+  },
+  yAxis: {
+    type: 'category',
+    data: ['国内育龄女性（全年龄段）', '青少年 / 初高中女生', '高校女大学生'],
+    axisLine: {show: false},
+    axisTick: {show: false},
+    axisLabel: {
+      fontSize: 16,
+      color: '#333'
+    }
+  },
+  series: [
+    {
+      type: 'pictorialBar',
+      symbol: 'path://M18,10 C18,14.4183 14.4183,18 10,18 C5.58172,18 2,14.4183 2,10 C2,5.58172 5.58172,2 10,2 C14.4183,2 18,5.58172 18,10 Z M10,22 C4.47715,22 0,26.4772 0,32 L20,32 C20,26.4772 15.5228,22 10,22 Z',
+      symbolSize: [22, 32],
+      symbolRepeat: true,
+      symbolMargin: [6, 12],
+      data: [
+        {value: 16.4, itemStyle:{color:'#C87486'}},
+        {value: 28, itemStyle:{color:'#C87486'}},
+        {value: 32.8, itemStyle:{color:'#C87486'}}
+      ],
+      label: {
+        show: true,
+        position: 'right',
+        formatter: '{c}%',
+        fontSize: 16,
+        color: '#666',
+        offset: [10, 0]
+      }
+    }
+  ]
+};
+chart.setOption(option);
+window.addEventListener('resize', function(){ chart.resize(); });
+</script>
+</body>
+</html>
