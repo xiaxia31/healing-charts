@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>痛经就诊漏斗金字塔</title>
+<style>
+  html,body{margin:0;padding:0;background:transparent;}
+  #chart-wrap{width:100%;height:100px;position:relative;}
+  svg{display:block;}
+  .layer-group{cursor:pointer;}
+  .dim{opacity:0.3;}
+  .tooltip{
+    position:absolute;padding:3px 5px;background:rgba(30,20,30,0.92);color:#fff;
+    font-size:8px;border-radius:2px;pointer-events:none;opacity:0;
+    transition:opacity 0.15s;font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    z-index:10;line-height:1.2;white-space:nowrap;
+  }
+  .tooltip .t-title{font-weight:700;font-size:9px;margin-bottom:1px;}
+</style>
+</head>
+<body style="background:transparent;">
+<div id="chart-wrap">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" id="chartSvg"></svg>
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script>
+const data = [
+  { name: '受访女性', value: 100, color: '#C87486' },
+  { name: '受痛经困扰', value: 78, color: '#8C6B94' },
+  { name: '前往医院就诊', value: 16.4, color: '#B4A0C8' }
+];
+
+const svg = document.getElementById('chartSvg');
+const tooltip = document.getElementById('tooltip');
+const wrap = document.getElementById('chart-wrap');
+
+const cx = 38;
+const topY = 22;
+const bottomY = 78;
+const totalH = bottomY - topY;
+const layerH = totalH / data.length;
+const maxW = 40;
+const minW = 8;
+
+data.forEach((d, i) => {
+  const y0 = topY + i * layerH;
+  const y1 = y0 + layerH - 1;
+  const wTop = maxW - (maxW - minW) * (i / data.length);
+  const wBot = maxW - (maxW - minW) * ((i + 1) / data.length);
+  const xTopL = cx - wTop / 2;
+  const xTopR = cx + wTop / 2;
+  const xBotL = cx - wBot / 2;
+  const xBotR = cx + wBot / 2;
+
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.classList.add('layer-group');
+  g.dataset.index = i;
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d', `M${xTopL},${y0} L${xTopR},${y0} L${xBotR},${y1} L${xBotL},${y1} Z`);
+  path.setAttribute('fill', d.color);
+  g.appendChild(path);
+
+  const valText = document.createElementNS('http://www.w3.org/2000/svg','text');
+  valText.setAttribute('x', cx);
+  valText.setAttribute('y', (y0 + y1) / 2 + 0.3);
+  valText.setAttribute('text-anchor','middle');
+  valText.setAttribute('dominant-baseline','middle');
+  valText.setAttribute('fill', '#fff');
+  valText.setAttribute('font-size','4');
+  valText.setAttribute('font-family','Arial, sans-serif');
+  valText.setAttribute('font-weight','700');
+  valText.textContent = d.value + '%';
+  g.appendChild(valText);
+
+  const nameText = document.createElementNS('http://www.w3.org/2000/svg','text');
+  nameText.setAttribute('x', xTopR + 2);
+  nameText.setAttribute('y', (y0 + y1) / 2 + 0.3);
+  nameText.setAttribute('text-anchor','start');
+  nameText.setAttribute('dominant-baseline','middle');
+  nameText.setAttribute('fill', '#4a3a4a');
+  nameText.setAttribute('font-size','4');
+  nameText.setAttribute('font-family','PingFang SC, Microsoft YaHei, sans-serif');
+  nameText.setAttribute('font-weight','500');
+  nameText.textContent = d.name;
+  g.appendChild(nameText);
+
+  svg.appendChild(g);
+});
+
+const groups = document.querySelectorAll('.layer-group');
+
+groups.forEach(g => {
+  g.addEventListener('mouseenter', e => {
+    const idx = parseInt(g.dataset.index);
+    groups.forEach((gr, i) => {
+      if(i !== idx) gr.classList.add('dim');
+    });
+    const rect = wrap.getBoundingClientRect();
+    const d = data[idx];
+    tooltip.innerHTML = `<div class="t-title">${d.name}</div>占比：${d.value}%`;
+    tooltip.style.opacity = '1';
+    tooltip.style.left = (e.clientX - rect.left + 4) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 4) + 'px';
+  });
+  g.addEventListener('mousemove', e => {
+    const rect = wrap.getBoundingClientRect();
+    tooltip.style.left = (e.clientX - rect.left + 4) + 'px';
+    tooltip.style.top = (e.clientY - rect.top + 4) + 'px';
+  });
+  g.addEventListener('mouseleave', () => {
+    groups.forEach(gr => gr.classList.remove('dim'));
+    tooltip.style.opacity = '0';
+  });
+});
+</script>
+</body>
+</html>
