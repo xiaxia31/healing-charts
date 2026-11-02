@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>未就医原因象形柱状图</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    html,body{height:100%;margin:0;background:transparent;}
+    #chart{width:100%;height:100%;}
+  </style>
+</head>
+<body style="background:transparent;">
+<div id="chart"></div>
+<script>
+var dom = document.getElementById('chart');
+var myChart = echarts.init(dom, null, {
+  renderer: 'canvas',
+  backgroundColor: 'transparent'
+});
+
+const pathSymbols = {
+  warning:
+    'path://M24 2C10.746 2 0 12.746 0 26s10.746 24 24 24 24-10.746 24-24S37.254 2 24 2zm0 44C13.064 46 4 36.936 4 26S13.064 6 24 6s20 9.064 20 20-9.064 20-20 20zm-2-30v12h4V16h-4zm0 16v4h4v-4h-4z',
+  normal:
+    'path://M24 2C10.746 2 0 12.746 0 26s10.746 24 24 24 24-10.746 24-24S37.254 2 24 2zm0 44C13.064 46 4 36.936 4 26S13.064 6 24 6s20 9.064 20 20-9.064 20-20 20zm-2-30v12h4V16h-4zm0 16v4h4v-4h-4z',
+  drug:
+    'path://M32 8H16c-4.418 0-8 3.582-8 8v24c0 4.418 3.582 8 8 8h16c4.418 0 8-3.582 8-8V16c0-4.418-3.582-8-8-8zM20 28h-4v-4h4v4zm8 0h-4v-4h4v4zm0-8h-4v-4h4v4zm-8 0h-4v-4h4v4z',
+  busy:
+    'path://M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20 20-8.954 20-20S35.046 4 24 4zm0 36c-8.822 0-16-7.178-16-16S15.178 8 24 8s16 7.178 16 16-7.178 16-16 16zm1-26h-2v10l8.2 4.8 1-1.6-7.2-4.2V14z',
+  form:
+    'path://M10 4c-2.206 0-4 1.794-4 4v32c0 2.206 1.794 4 4 4h24c2.206 0 4-1.794 4-4V8c0-2.206-1.794-4-4-4H10zm0 4h24v32H10V8zm4 8v4h16v-4H14zm0 8v4h16v-4H14zm0 8v4h10v-4H14z',
+  lock:
+    'path://M18 8v4h8V8c0-2.206-1.794-4-4-4s-4 1.794-4 4zm-8 4v24c0 2.206 1.794 4 4 4h16c2.206 0 4-1.794 4-4V12c0-2.206-1.794-4-4-4h-2v4h-16v-4h-2c-2.206 0-4 1.794-4 4zm10 8c-2.206 0-4 1.794-4 4s1.794 4 4 4 4-1.794 4-4-1.794-4-4-4z',
+  question:
+    'path://M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20 20-8.954 20-20S35.046 4 24 4zm0 36c-8.822 0-16-7.178-16-16S15.178 8 24 8s16 7.178 16 16-7.178 16-16 16zm-2-26h4v4h-4v-4zm0 8h4v12h-4v-12z',
+  doubt:
+    'path://M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20 20-8.954 20-20S35.046 4 24 4zm0 36c-8.822 0-16-7.178-16-16S15.178 8 24 8s16 7.178 16 16-7.178 16-16 16zm-2-18h4v10h-4v-10zm0-8h4v4h-4v-4z'
+};
+
+var option = {
+  backgroundColor: 'transparent',
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'none'
+    },
+    formatter: function (params) {
+      return params[0].name + '<br/>占比：' + params[0].value + '%';
+    }
+  },
+  xAxis: {
+    data: [
+      '认为症状较轻、没必要就医',
+      '认为属于正常生理/衰老过程',
+      '担心药物有副作用/成瘾',
+      '工作忙、没时间',
+      '检查流程麻烦',
+      '问题私密、不愿咨询',
+      '不知道挂什么科',
+      '怕医生不相信/不重视'
+    ],
+    axisTick: { show: false },
+    axisLine: { show: false },
+    axisLabel: {
+      color: '#333',
+      rotate: 25,
+      fontSize: 10
+    }
+  },
+  yAxis: {
+    splitLine: { show: false },
+    axisTick: { show: false },
+    axisLine: { show: false },
+    axisLabel: { show: false }
+  },
+  color: ['#C87486'],
+  series: [
+    {
+      name: 'hill',
+      type: 'pictorialBar',
+      barCategoryGap: '-130%',
+      symbol: 'path://M0,10 L10,10 C5.5,10 5.5,5 5,0 C4.5,5 4.5,10 0,10 z',
+      itemStyle: {
+        opacity: 0.5
+      },
+      emphasis: {
+        itemStyle: {
+          opacity: 1
+        }
+      },
+      data: [63.7, 56.7, 50, 27.8, 22.7, 18, 10.3, 8],
+      z: 10
+    },
+    {
+      name: 'glyph',
+      type: 'pictorialBar',
+      barGap: '-100%',
+      symbolPosition: 'end',
+      symbolSize: 50,
+      symbolOffset: [0, '-120%'],
+      label: {
+        show: true,
+        position: 'top',
+        formatter: '{c}%',
+        fontSize: 12,
+        fontWeight: '700',
+        color: '#C87486',
+        fontFamily: 'Arial, sans-serif',
+        offset: [0, -48]
+      },
+      data: [
+        {
+          value: 63.7,
+          symbol: pathSymbols.warning,
+          symbolSize: [44, 44]
+        },
+        {
+          value: 56.7,
+          symbol: pathSymbols.normal,
+          symbolSize: [44, 44]
+        },
+        {
+          value: 50,
+          symbol: pathSymbols.drug,
+          symbolSize: [44, 44]
+        },
+        {
+          value: 27.8,
+          symbol: pathSymbols.busy,
+          symbolSize: [44, 44]
+        },
+        {
+          value: 22.7,
+          symbol: pathSymbols.form,
+          symbolSize: [44, 44]
+        },
+        {
+          value: 18,
+          symbol: pathSymbols.lock,
+          symbolSize: [44, 44]
+        },
+        {
+          value: 10.3,
+          symbol: pathSymbols.question,
+          symbolSize: [44, 44]
+        },
+        {
+          value: 8,
+          symbol: pathSymbols.doubt,
+          symbolSize: [44, 44]
+        }
+      ]
+    }
+  ]
+};
+
+myChart.setOption(option);
+
+window.addEventListener('resize', function () {
+  myChart.resize();
+});
+</script>
+</body>
+</html>
