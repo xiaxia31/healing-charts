@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>痛经缓解方式旭日图</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    html,body{height:100%;margin:0;background:transparent;}
+    #chart{width:100%;height:100%;}
+  </style>
+</head>
+<body>
+<div id="chart"></div>
+<script>
+const myChart = echarts.init(document.getElementById('chart'), null, {
+  renderer: 'canvas',
+  backgroundColor: 'transparent'
+});
+
+const option = {
+  backgroundColor: 'transparent',
+  tooltip: {
+    trigger: 'item',
+    formatter: function(params) {
+      if (params.data.children) {
+        return params.name;
+      }
+      return params.treePathInfo.map(function(d){return d.name;}).join(' → ') + '<br/>占比：' + params.value + '%';
+    }
+  },
+  series: {
+    type: 'sunburst',
+    data: [
+      {
+        name: '95后年轻女性',
+        value: 100,
+        itemStyle: { color: '#C87486' },
+        children: [
+          { name: '口服止痛药物\n44.8%', value: 44.8, itemStyle: { color: '#E88A9A' } },
+          { name: '热敷/外用贴剂\n39.1%', value: 39.1, itemStyle: { color: '#F2C8D0' } },
+          { name: '偏方/忍耐\n16.1%', value: 16.1, itemStyle: { color: '#FBE3E8' } }
+        ]
+      },
+      {
+        name: '70后年长女性',
+        value: 100,
+        itemStyle: { color: '#8C6B94' },
+        children: [
+          { name: '口服止痛药物\n18.9%', value: 18.9, itemStyle: { color: '#B4A0C8' } },
+          { name: '热敷/外用贴剂\n58.2%', value: 58.2, itemStyle: { color: '#D1C2E0' } },
+          { name: '偏方/忍耐\n22.9%', value: 22.9, itemStyle: { color: '#E5DAF0' } }
+        ]
+      }
+    ],
+    radius: ['12%', '82%'],
+    label: {
+      show: true,
+      color: '#fff',
+      fontSize: 12,
+      fontFamily: 'PingFang SC, Microsoft YaHei, sans-serif',
+      fontWeight: '600',
+      align: 'center'
+    },
+    itemStyle: {
+      borderColor: 'rgba(255,255,255,0.4)',
+      borderWidth: 2
+    },
+    levels: [
+      {},
+      {
+        r0: '12%',
+        r: '42%',
+        label: {
+          fontSize: 14,
+          fontWeight: '700',
+          color: '#fff',
+          rotate: 'tangential'
+        }
+      },
+      {
+        r0: '42%',
+        r: '82%',
+        label: {
+          fontSize: 11,
+          fontWeight: '600',
+          color: '#3a2a3a',
+          rotate: 'tangential'
+        }
+      }
+    ],
+    emphasis: {
+      focus: 'ancestor',
+      itemStyle: {
+        shadowBlur: 16,
+        shadowColor: 'rgba(0,0,0,0.3)'
+      }
+    }
+  }
+};
+
+myChart.setOption(option);
+
+window.addEventListener('resize', function () {
+  myChart.resize();
+});
+</script>
+</body>
+</html>
