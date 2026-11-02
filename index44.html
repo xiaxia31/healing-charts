@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>痛经认知流向桑基图</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    html,body{height:100%;margin:0;background:transparent;}
+    #chart{width:100%;height:100%;}
+  </style>
+</head>
+<body style="background:transparent;">
+<div id="chart"></div>
+<script>
+var dom = document.getElementById('chart');
+var myChart = echarts.init(dom, null, {
+  renderer: 'canvas',
+  backgroundColor: 'transparent'
+});
+
+var option = {
+  backgroundColor: 'transparent',
+  tooltip: {
+    trigger: 'item',
+    formatter: function(params) {
+      if (params.dataType === 'edge') {
+        return params.data.source + ' → ' + params.data.target + '<br/>' + params.data.value + '人';
+      }
+      return params.name;
+    }
+  },
+  series: {
+    type: 'sankey',
+    layout: 'none',
+    left: 60,
+    top: 30,
+    right: 180,
+    bottom: 30,
+    emphasis: {
+      focus: 'adjacency'
+    },
+    nodeWidth: 22,
+    nodeGap: 14,
+    label: {
+      color: '#333',
+      fontSize: 12,
+      fontFamily: 'PingFang SC, Microsoft YaHei, sans-serif',
+      fontWeight: '500'
+    },
+    lineStyle: {
+      color: 'gradient',
+      curveness: 0.5,
+      opacity: 0.45
+    },
+    data: [
+      // 第一层：认知
+      { name: '认为痛经是正常的\n忍忍就好', itemStyle: { color: '#C87486' } },
+      { name: '认为痛经属于疾病\n需要干预', itemStyle: { color: '#8C6B94' } },
+      // 第二层：疼痛分级
+      { name: '轻度疼痛', itemStyle: { color: '#E88A9A' } },
+      { name: '中重度疼痛', itemStyle: { color: '#B4A0C8' } },
+      // 第三层：应对方式
+      { name: '忍耐 / 热敷红糖', itemStyle: { color: '#F2C8D0' } },
+      { name: '口服止痛药', itemStyle: { color: '#E88A9A' } },
+      { name: '自行买药止痛', itemStyle: { color: '#D1C2E0' } },
+      { name: '去医院就诊', itemStyle: { color: '#8C6B94' } },
+      { name: '热敷 + 常备止痛药', itemStyle: { color: '#FBE3E8' } },
+      { name: '单纯热敷', itemStyle: { color: '#F2C8D0' } },
+      { name: '自行购药', itemStyle: { color: '#B4A0C8' } },
+      { name: '医院妇科就诊', itemStyle: { color: '#8C6B94' } },
+      { name: '外用贴剂', itemStyle: { color: '#D1C2E0' } }
+    ],
+    links: [
+      // 认知 → 疼痛分级
+      { source: '认为痛经是正常的\n忍忍就好', target: '轻度疼痛', value: 476 },
+      { source: '认为痛经是正常的\n忍忍就好', target: '中重度疼痛', value: 204 },
+      { source: '认为痛经属于疾病\n需要干预', target: '轻度疼痛', value: 128 },
+      { source: '认为痛经属于疾病\n需要干预', target: '中重度疼痛', value: 192 },
+      // 轻度 → 应对（忍忍就好组）
+      { source: '轻度疼痛', target: '忍耐 / 热敷红糖', value: 405 },
+      { source: '轻度疼痛', target: '口服止痛药', value: 71 },
+      // 中重度 → 应对（忍忍就好组）
+      { source: '中重度疼痛', target: '忍耐 / 热敷红糖', value: 124 },
+      { source: '中重度疼痛', target: '自行买药止痛', value: 72 },
+      { source: '中重度疼痛', target: '去医院就诊', value: 8 },
+      // 轻度 → 应对（需要干预组）
+      { source: '轻度疼痛', target: '热敷 + 常备止痛药', value: 97 },
+      { source: '轻度疼痛', target: '单纯热敷', value: 31 },
+      // 中重度 → 应对（需要干预组）
+      { source: '中重度疼痛', target: '自行购药', value: 104 },
+      { source: '中重度疼痛', target: '医院妇科就诊', value: 66 },
+      { source: '中重度疼痛', target: '外用贴剂', value: 22 }
+    ]
+  }
+};
+
+myChart.setOption(option);
+
+window.addEventListener('resize', function () {
+  myChart.resize();
+});
+</script>
+</body>
+</html>
