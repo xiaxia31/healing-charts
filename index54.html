@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>痛经自我管理方式矩形树图</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    html,body{height:100%;margin:0;background:transparent;}
+    #chart{width:100%;height:100%;}
+  </style>
+</head>
+<body style="background:transparent;">
+<div id="chart"></div>
+<script>
+var dom = document.getElementById('chart');
+var myChart = echarts.init(dom, null, {
+  renderer: 'canvas',
+  backgroundColor: 'transparent'
+});
+
+var option = {
+  backgroundColor: 'transparent',
+  tooltip: {
+    formatter: function(params) {
+      return params.name + '<br/>线上消费占比：' + params.value + '%';
+    }
+  },
+  series: [
+    {
+      type: 'treemap',
+      roam: false,
+      breadcrumb: { show: false },
+      label: {
+        show: true,
+        formatter: '{b}\n{c}%',
+        fontSize: 11
+      },
+      itemStyle: {
+        borderRadius: 8,
+        gapWidth: 6
+      },
+      data: [
+        {
+          name: '口服止痛药物（布洛芬等 OTC 止痛药）',
+          value: 47,
+          itemStyle: { color: '#C87486' }
+        },
+        {
+          name: '外用热敷类（暖宫贴、痛经贴）',
+          value: 36,
+          itemStyle: { color: '#8C6B94' }
+        },
+        {
+          name: '经期调理中成药（逍遥丸、益母草等）',
+          value: 12,
+          itemStyle: { color: '#B4A0C8' }
+        },
+        {
+          name: '止痛器械（TENS 痛经仪等）',
+          value: 5,
+          itemStyle: { color: '#E88A9A' }
+        }
+      ]
+    }
+  ]
+};
+
+myChart.setOption(option);
+
+window.addEventListener('resize', function () {
+  myChart.resize();
+});
+</script>
+</body>
+</html>
