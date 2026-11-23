@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+</head>
+<body style="margin:0;background:transparent;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;">
+<div style="position:relative;width:100%;max-width:600px;">
+  <div id="tip" style="position:absolute;background:rgba(35,35,35,.93);color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.15);line-height:1.6;"></div>
+
+  <svg viewBox="0 0 600 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+    <!-- 年份标签 -->
+    <text x="150" y="40" text-anchor="middle" font-size="18" font-weight="bold" fill="#C87486">2020年</text>
+    <text x="450" y="40" text-anchor="middle" font-size="18" font-weight="bold" fill="#8C6B94">2025年</text>
+
+    <!-- 中间分隔线 -->
+    <line x1="300" y1="60" x2="300" y2="380" stroke="#e8e4e8" stroke-width="1" stroke-dasharray="4,4"/>
+
+    <!-- 药物 2020 (左, 豆沙玫红) -->
+    <g class="bar-group" data-year="2020" data-type="药物" data-value="85%" style="cursor:pointer;transition:opacity .25s;">
+      <rect x="80" y="100" width="200" height="70" rx="35" ry="35" fill="#C87486" opacity="0.9"/>
+      <text x="150" y="130" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">药物</text>
+      <text x="150" y="152" text-anchor="middle" font-size="22" fill="#fff" font-weight="700" font-family="Arial">85%</text>
+    </g>
+
+    <!-- 非药物 2020 (左, 淡香芋紫) -->
+    <g class="bar-group" data-year="2020" data-type="非药物" data-value="15%" style="cursor:pointer;transition:opacity .25s;">
+      <rect x="165" y="190" width="115" height="50" rx="25" ry="25" fill="#D1C2E0" opacity="0.9"/>
+      <text x="150" y="212" text-anchor="middle" font-size="12" fill="#4a3a4a" font-weight="600">非药物</text>
+      <text x="245" y="220" text-anchor="middle" font-size="18" fill="#4a3a4a" font-weight="700" font-family="Arial">15%</text>
+    </g>
+
+    <!-- 药物 2025 (右, 灰调紫) -->
+    <g class="bar-group" data-year="2025" data-type="药物" data-value="65%" style="cursor:pointer;transition:opacity .25s;">
+      <rect x="320" y="100" width="200" height="70" rx="35" ry="35" fill="#8C6B94" opacity="0.9"/>
+      <text x="450" y="130" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">药物</text>
+      <text x="450" y="152" text-anchor="middle" font-size="22" fill="#fff" font-weight="700" font-family="Arial">65%</text>
+    </g>
+
+    <!-- 非药物 2025 (右, 浅粉) -->
+    <g class="bar-group" data-year="2025" data-type="非药物" data-value="35%" style="cursor:pointer;transition:opacity .25s;">
+      <rect x="320" y="190" width="115" height="50" rx="25" ry="25" fill="#E88A9A" opacity="0.9"/>
+      <text x="450" y="212" text-anchor="middle" font-size="12" fill="#4a2a30" font-weight="600">非药物</text>
+      <text x="355" y="220" text-anchor="middle" font-size="18" fill="#4a2a30" font-weight="700" font-family="Arial">35%</text>
+    </g>
+
+    <!-- 下降箭头 + 说明 -->
+    <g transform="translate(300, 135)">
+      <path d="M -50,-20 C -30,-20 -10,0 10,0 C 30,0 50,-20 50,-20" fill="none" stroke="#C87486" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+      <polygon points="-52,-22 -44,-18 -52,-14" fill="#C87486" opacity="0.6"/>
+      <polygon points="52,-18 44,-22 52,-14" fill="#8C6B94" opacity="0.6"/>
+    </g>
+    <text x="300" y="128" text-anchor="middle" font-size="11" fill="#999" font-style="italic">药物 ↓20%</text>
+
+    <!-- 上升箭头 + 说明 -->
+    <g transform="translate(300, 215)">
+      <path d="M -40,10 C -20,10 0,0 20,0 C 40,0 60,10 60,10" fill="none" stroke="#8C6B94" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+      <polygon points="-42,8 -34,12 -42,14" fill="#D1C2E0" opacity="0.6"/>
+      <polygon points="62,12 54,8 62,14" fill="#E88A9A" opacity="0.6"/>
+    </g>
+    <text x="300" y="260" text-anchor="middle" font-size="11" fill="#999" font-style="italic">非药物 ↑20%</text>
+
+    <!-- 底部总结 -->
+    <g transform="translate(300, 330)">
+      <rect x="-110" y="0" width="220" height="50" rx="25" ry="25" fill="url(#bottomGrad)" opacity="0.15"/>
+      <text x="0" y="20" text-anchor="middle" font-size="11" fill="#665570">5年间</text>
+      <text x="0" y="40" text-anchor="middle" font-size="14" fill="#8C6B94" font-weight="700">非药物方式占比翻倍</text>
+    </g>
+
+    <defs>
+      <linearGradient id="bottomGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#C87486"/>
+        <stop offset="100%" style="stop-color:#8C6B94"/>
+      </linearGradient>
+    </defs>
+
+  </svg>
+</div>
+
+<script>
+var tip=document.getElementById('tip');
+var wrap=document.querySelector('div[style*="position:relative"]');
+var groups=document.querySelectorAll('.bar-group');
+
+groups.forEach(function(g){
+  g.addEventListener('mouseenter',function(){
+    groups.forEach(function(o){if(o!==g)o.style.opacity='0.2';});
+    g.style.opacity='1';
+    tip.innerHTML='<span style="font-weight:bold;font-size:14px;">'+g.dataset.year+'年 '+g.dataset.type+'</span><br>'+
+      '<span style="color:#C87486;">占比：</span><b>'+g.dataset.value+'</b>';
+    tip.style.opacity='1';
+  });
+  g.addEventListener('mousemove',function(e){
+    var r=wrap.getBoundingClientRect(),x=e.clientX-r.left+15,y=e.clientY-r.top-60;
+    if(x+160>r.width)x=e.clientX-r.left-160;
+    if(y<0)y=e.clientY-r.top+15;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  });
+  g.addEventListener('mouseleave',function(){
+    groups.forEach(function(o){o.style.opacity='1';});
+    tip.style.opacity='0';
+  });
+});
+</script>
+</body>
+</html>
