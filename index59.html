@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>女性疼痛护理市场规模及同比增速趋势</title>
+  <script src="https://cdn.staticfile.org/echarts/5.4.3/echarts.min.js"></script>
+  <style>
+    *{box-sizing:border-box;}
+    html,body{width:100%;height:100%;margin:0;padding:0;background:transparent;}
+    .wrap{width:100%;height:100%;display:flex;flex-direction:column;background:transparent;}
+    #chart{width:100%;flex:1;min-height:400px;}
+    .player{
+      display:flex;align-items:center;justify-content:center;gap:20px;
+      height:44px;flex-shrink:0;
+      font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    }
+    .play-btn{
+      background:rgba(200,116,134,0.9);
+      color:#fff;border:none;border-radius:20px;
+      padding:7px 24px;font-size:12px;cursor:pointer;
+      font-family:inherit;
+    }
+    .play-btn:hover{background:rgba(200,116,134,1);}
+    .play-btn.pause{background:rgba(140,107,148,0.9);}
+    .progress{
+      width:220px;height:4px;background:rgba(200,200,200,0.3);
+      border-radius:2px;overflow:hidden;
+    }
+    .progress-inner{
+      height:100%;width:0%;
+      background:linear-gradient(90deg,#C87486,#8C6B94);
+      border-radius:2px;
+      transition:width 0.25s linear;
+    }
+  </style>
+</head>
+<body style="background:transparent;">
+<div class="wrap">
+  <div id="chart"></div>
+  <div class="player">
+    <button class="play-btn pause" id="playBtn">▶ 播放</button>
+    <div class="progress"><div class="progress-inner" id="prog"></div></div>
+  </div>
+</div>
+<script>
+var chartDom = document.getElementById('chart');
+var chart = echarts.init(chartDom, null, {renderer:'canvas'});
+
+var marketFull = [140.2, 161, 204.7, 226.1, 224.9, 228.7];
+var growthFull = [null, 14.8, 27.1, 10.5, -0.5, 1.7];
+var n = 6;
+
+var option = {
+  // 全局动画配置
+  animation: true,
+  animationDuration: 2200,
+  animationEasing: 'cubicOut',
+  animationThreshold: 2000,
+  backgroundColor: 'transparent',
+
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: { type: 'cross' },
+    formatter: function(params) {
+      let res = params[0].name + '年<br/>';
+      params.forEach(item => {
+        if (item.seriesName === '市场规模') {
+          res += `${item.marker} ${item.seriesName}：${item.value} 亿元<br/>`;
+        } else {
+          res += `${item.marker} ${item.seriesName}：${item.value !== null ? item.value + '%' : '—'}<br/>`;
+        }
+      });
+      return res;
+    }
+  },
+  legend: {
+    data: ['市场规模', '同比增速'],
+    top: 60,
+    textStyle: { color: '#665570' }
+  },
+  grid: {
+    left: '5%',
+    right: '5%',
+    bottom: '10%',
+    top: '22%',
+    containLabel: true
+  },
+  xAxis: {
+    type: 'category',
+    data: ['2020', '2021', '2022', '2023', '2024', '2025'],
+    axisTick: { show: false },
+    axisLine: { lineStyle: { color: '#d4ccd9' } },
+    axisLabel: { color: '#665570', fontSize: 12 }
+  },
+  yAxis: [
+    {
+      type: 'value',
+      name: '市场规模（亿元）',
+      position: 'left',
+      splitLine: { lineStyle: { color: '#ece7f0', type: 'dashed' } },
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { color: '#665570' }
+    },
+    {
+      type: 'value',
+      name: '同比增速（%）',
+      position: 'right',
+      splitLine: { show: false },
+      axisLine: { show: false },
+      axisTick: { show: false },
+      axisLabel: { color: '#665570', formatter: '{value}%' }
+    }
+  ],
+  series: [
+    {
+      name: '市场规模',
+      type: 'line',
+      yAxisIndex: 0,
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 8,
+      lineStyle: { width: 3, color: '#C87486' },
+      itemStyle: { color: '#C87486', borderColor: '#fff', borderWidth: 2 },
+      areaStyle: {
+        opacity: 0.25,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#C87486' },
+          { offset: 1, color: 'rgba(200,116,134,0.05)' }
+        ])
+      },
+      animationDelay: 0,
+      label: {
+        show: true,
+        position: 'top',
+        color: '#C87486',
+        fontSize: 11,
+        fontWeight: 600,
+        formatter: '{c}'
+      },
+      data: new Array(n).fill(null)
+    },
+    {
+      name: '同比增速',
+      type: 'line',
+      yAxisIndex: 1,
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 8,
+      lineStyle: { width: 3, color: '#8C6B94' },
+      itemStyle: { color: '#8C6B94', borderColor: '#fff', borderWidth: 2 },
+      areaStyle: {
+        opacity: 0.2,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#8C6B94' },
+          { offset: 1, color: 'rgba(140,107,148,0.05)' }
+        ])
+      },
+      animationDelay: 600,
+      label: {
+        show: true,
+        position: 'top',
+        color: '#8C6B94',
+        fontSize: 11,
+        fontWeight: 600,
+        formatter: function(p) {
+          return p.value == null ? '' : p.value + '%';
+        }
+      },
+      data: new Array(n).fill(null)
+    }
+  ]
+};
+
+chart.setOption(option);
+
+var btn = document.getElementById('playBtn');
+var prog = document.getElementById('prog');
+var idx = 0;
+var playing = false;
+var timer = null;
+
+function setStep(i){
+  var m = marketFull.slice(0,i+1);
+  var g = growthFull.slice(0,i+1);
+  for(var j=i+1;j<n;j++){m.push(null);g.push(null);}
+  chart.setOption({
+    series:[
+      {data:m},
+      {data:g}
+    ]
+  });
+  prog.style.width = ((i+1)/n*100)+'%';
+}
+
+function step(){
+  if(idx>=n){idx=0;}
+  setStep(idx);
+  idx++;
+  if(idx<=n){
+    timer = setTimeout(step, 900);
+  }else{
+    playing = false;
+    btn.textContent = '▶ 播放';
+    btn.classList.add('pause');
+  }
+}
+
+btn.onclick = function(){
+  if(playing){
+    playing = false;
+    clearTimeout(timer);
+    btn.textContent = '▶ 播放';
+    btn.classList.add('pause');
+  }else{
+    playing = true;
+    if(idx>=n)idx=0;
+    btn.textContent = '❚❚ 暂停';
+    btn.classList.remove('pause');
+    step();
+  }
+};
+
+// 初始显示第一帧
+setStep(0);
+idx = 1;
+
+window.addEventListener('resize',function(){chart.resize();});
+</script>
+</body>
+</html>
