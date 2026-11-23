@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+</head>
+<body style="margin:0;background:transparent;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;">
+<div style="position:relative;width:100%;max-width:780px;">
+  <div id="tip" style="position:absolute;background:rgba(35,35,35,.93);color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.15);line-height:1.6;"></div>
+
+  <svg viewBox="0 0 780 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+    <!-- 列标题 -->
+    <text x="200" y="32" text-anchor="middle" font-size="14" font-weight="bold" fill="#C87486">2025线上市场份额</text>
+    <text x="580" y="32" text-anchor="middle" font-size="14" font-weight="bold" fill="#8C6B94">近3年年均增速</text>
+
+    <!-- 垂直参考线 -->
+    <line x1="200" y1="55" x2="200" y2="480" stroke="#eee" stroke-width="1"/>
+    <line x1="580" y1="55" x2="580" y2="480" stroke="#eee" stroke-width="1"/>
+
+    <!-- ========== 组1: 口服镇痛 ========== -->
+    <g class="slope" data-cat="口服镇痛" data-share="57%" data-growth="12%" style="cursor:pointer;transition:opacity .25s;">
+      <line x1="200" y1="110" x2="580" y2="175" stroke="#C87486" stroke-width="3"/>
+      <circle cx="200" cy="110" r="7" fill="#C87486"/>
+      <circle cx="580" cy="175" r="7" fill="#8C6B94"/>
+      <line x1="200" y1="110" x2="130" y2="80" stroke="#ccc" stroke-width="0.8"/>
+      <text x="120" y="76" text-anchor="end" font-size="12" font-weight="bold" fill="#333">口服镇痛</text>
+      <text x="120" y="60" text-anchor="end" font-size="13" font-weight="bold" fill="#C87486">57%</text>
+      <line x1="580" y1="175" x2="650" y2="140" stroke="#ccc" stroke-width="0.8"/>
+      <text x="660" y="137" font-size="13" font-weight="bold" fill="#8C6B94">12%</text>
+    </g>
+
+    <!-- ========== 组2: 外用镇痛 ========== -->
+    <g class="slope" data-cat="外用镇痛" data-share="31%" data-growth="18%" style="cursor:pointer;transition:opacity .25s;">
+      <line x1="200" y1="260" x2="580" y2="260" stroke="#B4A0C8" stroke-width="3"/>
+      <circle cx="200" cy="260" r="7" fill="#B4A0C8"/>
+      <circle cx="580" cy="260" r="7" fill="#8C6B94"/>
+      <line x1="200" y1="260" x2="130" y2="260" stroke="#ccc" stroke-width="0.8"/>
+      <text x="120" y="256" text-anchor="end" font-size="12" font-weight="bold" fill="#333">外用镇痛</text>
+      <text x="120" y="240" text-anchor="end" font-size="13" font-weight="bold" fill="#B4A0C8">31%</text>
+      <line x1="580" y1="260" x2="650" y2="260" stroke="#ccc" stroke-width="0.8"/>
+      <text x="660" y="256" font-size="13" font-weight="bold" fill="#8C6B94">18%</text>
+    </g>
+
+    <!-- ========== 组3: 止痛器械 ========== -->
+    <g class="slope" data-cat="止痛器械" data-share="12%" data-growth="29%" style="cursor:pointer;transition:opacity .25s;">
+      <line x1="200" y1="410" x2="580" y2="380" stroke="#E88A9A" stroke-width="3"/>
+      <circle cx="200" cy="410" r="7" fill="#E88A9A"/>
+      <circle cx="580" cy="380" r="7" fill="#8C6B94"/>
+      <line x1="200" y1="410" x2="130" y2="430" stroke="#ccc" stroke-width="0.8"/>
+      <text x="120" y="426" text-anchor="end" font-size="12" font-weight="bold" fill="#333">止痛器械</text>
+      <text x="120" y="410" text-anchor="end" font-size="13" font-weight="bold" fill="#E88A9A">12%</text>
+      <line x1="580" y1="380" x2="650" y2="400" stroke="#ccc" stroke-width="0.8"/>
+      <text x="660" y="396" font-size="13" font-weight="bold" fill="#8C6B94">29%</text>
+    </g>
+
+  </svg>
+</div>
+
+<script>
+var tip=document.getElementById('tip');
+var wrap=document.querySelector('div[style*="position:relative"]');
+var slopes=document.querySelectorAll('.slope');
+
+slopes.forEach(function(s){
+  s.addEventListener('mouseenter',function(){
+    slopes.forEach(function(o){if(o!==s)o.style.opacity='0.15';});
+    var lines=s.querySelectorAll('line');
+    lines.forEach(function(l){l.style.strokeWidth='5';});
+    var circles=s.querySelectorAll('circle');
+    circles.forEach(function(c){c.setAttribute('r','9');});
+    tip.innerHTML='<span style="font-weight:bold;font-size:14px;">'+s.dataset.cat+'</span><br>'+
+      '<span style="color:#C87486;">市场份额：</span><b>'+s.dataset.share+'</b><br>'+
+      '<span style="color:#8C6B94;">年均增速：</span><b>'+s.dataset.growth+'</b>';
+    tip.style.opacity='1';
+  });
+  s.addEventListener('mousemove',function(e){
+    var r=wrap.getBoundingClientRect(),x=e.clientX-r.left+15,y=e.clientY-r.top-70;
+    if(x+180>r.width)x=e.clientX-r.left-180;
+    if(y<0)y=e.clientY-r.top+15;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  });
+  s.addEventListener('mouseleave',function(){
+    slopes.forEach(function(o){o.style.opacity='1';});
+    slopes.forEach(function(o){
+      o.querySelectorAll('line').forEach(function(l){l.style.strokeWidth='3';});
+      o.querySelectorAll('circle').forEach(function(c){c.setAttribute('r','7');});
+    });
+    tip.style.opacity='0';
+  });
+});
+</script>
+</body>
+</html>
