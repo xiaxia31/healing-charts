@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>市场规模面积图</title>
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; height: 100%; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+  #wrap { width: 100%; height: 470px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <svg viewBox="0 0 600 470" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+    <defs>
+      <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#C87486;stop-opacity:0.7"/>
+        <stop offset="100%" style="stop-color:#C87486;stop-opacity:0.08"/>
+      </linearGradient>
+    </defs>
+
+    <!-- 背景面积 -->
+    <path d="M 80,350 L 80,280 Q 290,260 520,140 L 520,350 Z" fill="url(#areaGrad)"/>
+
+    <!-- 顶部曲线 -->
+    <path d="M 80,280 Q 290,260 520,140" fill="none" stroke="#C87486" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- 左端点 2021 -->
+    <circle cx="80" cy="280" r="8" fill="#fff" stroke="#C87486" stroke-width="3"/>
+    <text x="80" y="260" text-anchor="middle" font-size="14" fill="#4a3a50" font-weight="700">2021</text>
+    <text x="80" y="310" text-anchor="middle" font-size="22" fill="#C87486" font-weight="700" font-family="Arial">12.7</text>
+    <text x="80" y="328" text-anchor="middle" font-size="11" fill="#999">亿元</text>
+
+    <!-- 右端点 2025 -->
+    <circle cx="520" cy="140" r="8" fill="#fff" stroke="#C87486" stroke-width="3"/>
+    <text x="520" y="120" text-anchor="middle" font-size="14" fill="#4a3a50" font-weight="700">2025</text>
+    <text x="520" y="170" text-anchor="middle" font-size="22" fill="#C87486" font-weight="700" font-family="Arial">29.3</text>
+    <text x="520" y="188" text-anchor="middle" font-size="11" fill="#999">亿元</text>
+
+    <!-- 增长标签 -->
+    <g transform="translate(300, 200)">
+      <rect x="-55" y="-22" width="110" height="44" rx="22" ry="22" fill="#fff" stroke="#C87486" stroke-width="1.5" opacity="0.9"/>
+      <text x="0" y="-4" text-anchor="middle" font-size="11" fill="#665570">4年增长</text>
+      <text x="0" y="14" text-anchor="middle" font-size="16" fill="#C87486" font-weight="700" font-family="Arial">+130.7%</text>
+    </g>
+
+    <!-- 底部基线 -->
+    <line x1="60" y1="350" x2="540" y2="350" stroke="#e8e4e8" stroke-width="1"/>
+    <text x="60" y="370" font-size="10" fill="#bbb">0</text>
+
+    <!-- 虚线辅助 -->
+    <line x1="80" y1="280" x2="80" y2="350" stroke="#C87486" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+    <line x1="520" y1="140" x2="520" y2="350" stroke="#C87486" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+  </svg>
+</div>
+</body>
+</html>
