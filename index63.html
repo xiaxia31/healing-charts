@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>女性疼痛临床试验分布</title>
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; height: 100%; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  #wrap { width: 100%; height: 470px; position: relative; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="chart" style="width:100%;height:100%;"></div>
+</div>
+<script src="https://cdn.staticfile.org/echarts/5.4.3/echarts.min.js"></script>
+<script>
+var chart = echarts.init(document.getElementById('chart'));
+var data = [
+  { value: 7, name: '子宫内膜异位症（相关疼痛）', itemStyle: { color: '#C87486' } },
+  { value: 2, name: '月经性偏头痛（女性专属）', itemStyle: { color: '#8C6B94' } },
+  { value: 2, name: '慢性盆腔疼痛（女性专属）', itemStyle: { color: '#B4A0C8' } },
+  { value: 1, name: '纤维肌痛综合征（仅限女性入组）', itemStyle: { color: '#E88A9A' } },
+  { value: 1, name: '辅助生殖相关疼痛', itemStyle: { color: '#D1C2E0' } }
+];
+
+var option = {
+  backgroundColor: 'transparent',
+  tooltip: {
+    trigger: 'item',
+    formatter: '{b}<br/>项目数：{c}项（{d}%）'
+  },
+  legend: {
+    orient: 'vertical',
+    right: 20,
+    top: 'center',
+    icon: 'circle',
+    itemWidth: 10,
+    itemHeight: 10,
+    itemGap: 14,
+    textStyle: {
+      color: '#4a3a50',
+      fontSize: 12
+    },
+    formatter: function(name) {
+      var item = data.find(function(d){ return d.name === name; });
+      return name + '  ' + item.value + '项';
+    }
+  },
+  series: [
+    {
+      type: 'pie',
+      radius: ['45%', '72%'],
+      center: ['38%', '50%'],
+      avoidLabelOverlap: true,
+      itemStyle: {
+        borderRadius: 6,
+        borderColor: 'rgba(255,255,255,0.8)',
+        borderWidth: 2
+      },
+      label: {
+        show: true,
+        position: 'outside',
+        formatter: '{d}%',
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#4a3a50'
+      },
+      labelLine: {
+        length: 10,
+        length2: 8,
+        smooth: true
+      },
+      emphasis: {
+        scale: true,
+        scaleSize: 8,
+        itemStyle: {
+          shadowBlur: 16,
+          shadowColor: 'rgba(0,0,0,0.15)'
+        },
+        label: {
+          fontSize: 14,
+          fontWeight: '700'
+        }
+      },
+      data: data
+    }
+  ],
+  graphic: [
+    {
+      type: 'group',
+      left: '38%',
+      top: '50%',
+      style: { transform: 'translate(-50%, -50%)' },
+      children: [
+        {
+          type: 'text',
+          style: {
+            text: '13',
+            textAlign: 'center',
+            fill: '#C87486',
+            fontSize: 36,
+            fontWeight: '700',
+            fontFamily: 'Arial, sans-serif'
+          }
+        },
+        {
+          type: 'text',
+          style: {
+            text: '临床试验总数',
+            textAlign: 'center',
+            fill: '#665570',
+            fontSize: 12,
+            y: 28
+          }
+        }
+      ]
+    }
+  ]
+};
+
+chart.setOption(option);
+window.addEventListener('resize', function(){ chart.resize(); });
+</script>
+</body>
+</html>
