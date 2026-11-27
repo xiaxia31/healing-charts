@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>医保覆盖率</title>
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; height: 100%; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+  #wrap { width: 100%; height: 470px; position: relative; }
+  #tip { position: absolute; background: rgba(35,35,35,.9); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 13px; pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 100; white-space: nowrap; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="tip"></div>
+  <svg viewBox="0 0 600 470" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+    <defs>
+      <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#B4A0C8"/>
+        <stop offset="100%" style="stop-color:#9a8ab0"/>
+      </linearGradient>
+      <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#8C6B94"/>
+        <stop offset="100%" style="stop-color:#72507a"/>
+      </linearGradient>
+      <linearGradient id="grad3" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:#C87486"/>
+        <stop offset="100%" style="stop-color:#a85a6c"/>
+      </linearGradient>
+    </defs>
+
+    <!-- 底部基线 -->
+    <line x1="60" y1="380" x2="560" y2="380" stroke="#e0d8e5" stroke-width="1.5"/>
+
+    <!-- 2019 第一层 -->
+    <g class="step" data-year="2019年" data-value="78%" style="cursor:pointer;">
+      <rect x="80" y="250" width="140" height="130" rx="6" ry="6" fill="url(#grad1)" opacity="0.9"/>
+      <g transform="translate(150, 290)">
+        <rect x="-4" y="-14" width="8" height="28" rx="2" fill="#fff" opacity="0.9"/>
+        <rect x="-14" y="-4" width="28" height="8" rx="2" fill="#fff" opacity="0.9"/>
+      </g>
+      <text x="150" y="335" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">2019年</text>
+      <text x="150" y="360" text-anchor="middle" font-size="28" fill="#fff" font-weight="800" font-family="Arial">78%</text>
+    </g>
+
+    <!-- 2019→2022 增长箭头 -->
+    <g transform="translate(220, 280)">
+      <path d="M 0,0 L 70,-50 L 70,-40 L 80,-40 L 65,-60 L 50,-40 L 60,-40 L 60,-10 Z" fill="#8C6B94" opacity="0.7"/>
+      <text x="75" y="-25" font-size="12" fill="#8C6B94" font-weight="700">+7%</text>
+    </g>
+
+    <!-- 2022 第二层 -->
+    <g class="step" data-year="2022年" data-value="85%" style="cursor:pointer;">
+      <rect x="230" y="180" width="140" height="200" rx="6" ry="6" fill="url(#grad2)" opacity="0.9"/>
+      <g transform="translate(300, 220)">
+        <rect x="-5" y="-16" width="10" height="32" rx="2" fill="#fff" opacity="0.9"/>
+        <rect x="-16" y="-5" width="32" height="10" rx="2" fill="#fff" opacity="0.9"/>
+      </g>
+      <text x="300" y="275" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">2022年</text>
+      <text x="300" y="310" text-anchor="middle" font-size="34" fill="#fff" font-weight="800" font-family="Arial">85%</text>
+    </g>
+
+    <!-- 2022→2025 增长箭头 -->
+    <g transform="translate(370, 210)">
+      <path d="M 0,0 L 70,-60 L 70,-50 L 80,-50 L 65,-70 L 50,-50 L 60,-50 L 60,-10 Z" fill="#C87486" opacity="0.7"/>
+      <text x="85" y="-35" font-size="12" fill="#C87486" font-weight="700">+6%</text>
+    </g>
+
+    <!-- 2025 第三层 -->
+    <g class="step" data-year="2025年" data-value="91%" style="cursor:pointer;">
+      <rect x="380" y="110" width="140" height="270" rx="6" ry="6" fill="url(#grad3)" opacity="0.9"/>
+      <g transform="translate(450, 150)">
+        <rect x="-6" y="-18" width="12" height="36" rx="2" fill="#fff" opacity="0.9"/>
+        <rect x="-18" y="-6" width="36" height="12" rx="2" fill="#fff" opacity="0.9"/>
+      </g>
+      <text x="450" y="200" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">2025年</text>
+      <text x="450" y="245" text-anchor="middle" font-size="40" fill="#fff" font-weight="800" font-family="Arial">91%</text>
+    </g>
+
+    <!-- 顶部累计增长 -->
+    <g transform="translate(300, 60)">
+      <rect x="-90" y="-25" width="180" height="50" rx="25" fill="#fff" stroke="#C87486" stroke-width="2" opacity="0.95"/>
+      <text x="0" y="-5" text-anchor="middle" font-size="11" fill="#665570">6年累计提升</text>
+      <text x="0" y="15" text-anchor="middle" font-size="18" fill="#C87486" font-weight="800" font-family="Arial">+13个百分点</text>
+    </g>
+
+  </svg>
+</div>
+<script>
+var tip = document.getElementById('tip');
+var wrap = document.getElementById('wrap');
+var steps = document.querySelectorAll('.step');
+
+steps.forEach(function(s) {
+  s.addEventListener('mouseenter', function() {
+    steps.forEach(function(o) { if (o !== s) o.style.opacity = '0.5'; });
+    s.style.opacity = '1';
+    tip.innerHTML = '<span style="font-weight:bold;">' + s.dataset.year + '</span><br/>医保覆盖率：' + s.dataset.value;
+    tip.style.opacity = '1';
+  });
+  s.addEventListener('mousemove', function(e) {
+    var r = wrap.getBoundingClientRect();
+    var x = e.clientX - r.left + 15;
+    var y = e.clientY - r.top - 50;
+    if (x + 140 > r.width) x = e.clientX - r.left - 140;
+    if (y < 0) y = e.clientY - r.top + 15;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  });
+  s.addEventListener('mouseleave', function() {
+    steps.forEach(function(o) { o.style.opacity = '1'; });
+    tip.style.opacity = '0';
+  });
+});
+</script>
+</body>
+</html>
